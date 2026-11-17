@@ -1,0 +1,69 @@
+name: Build
+
+# Compila, testa e publica o SupernovaBench.exe (arquivo único, com o .NET embutido).
+# - Todo push/PR: gera o .exe como artifact (aba Actions → execução → Artifacts).
+# - Tags v*: cria também uma Release no GitHub com o .exe e o .zip.
+on:
+  push:
+    branches: ['**']
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restaurar pacotes
+        run: dotnet restore SupernovaBench.sln
+
+      - name: Compilar
+        run: dotnet build SupernovaBench.sln -c Release --no-restore -nologo
+
+      - name: Testes
+        run: dotnet test tests/SupernovaBench.Core.Tests -c Release --no-build -nologo --logger "console;verbosity=normal"
+
+      - name: Benchmark rápido pela linha de comando (fumaça)
+        run: dotnet run --project src/SupernovaBench.Cli -c Release --no-build -- bench cpu --quick --lang pt-BR
+
+      - name: Publicar SupernovaBench.exe
+        run: >
+          dotnet publish src/SupernovaBench.App/SupernovaBench.App.csproj -c Release -r win-x64 --self-contained true
+          -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:EnableCompressionInSingleFile=true
+          -p:DebugType=None -o dist -nologo
+
+      - name: Montar pacote
+        shell: pwsh
+        run: |
+          Copy-Item README.md, LICENSE, THIRD-PARTY-NOTICES.md dist/
+          Compress-Archive -Path dist/* -DestinationPath SupernovaBench-win-x64.zip
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: SupernovaBench-win-x64
+          path: |
+            dist/SupernovaBench.exe
+            dist/README.md
+            dist/LICENSE
+            dist/THIRD-PARTY-NOTICES.md
+          if-no-files-found: error
+
+      - name: Release (tags v*)
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release create $env:GITHUB_REF_NAME SupernovaBench-win-x64.zip dist/SupernovaBench.exe --title "Supernova Bench $env:GITHUB_REF_NAME" --generate-notes

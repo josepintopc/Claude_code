@@ -1,0 +1,211 @@
+<UserControl x:Class="SupernovaBench.App.Views.OverviewView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="clr-namespace:SupernovaBench.App.Localization"
+             xmlns:vm="clr-namespace:SupernovaBench.App.ViewModels"
+             xmlns:c="clr-namespace:SupernovaBench.App.Controls">
+    <UserControl.Resources>
+        <c:BoolToVisibilityConverter x:Key="BoolToVis" />
+
+        <!-- Linha "rótulo / valor" do resumo do PC -->
+        <Style x:Key="SummaryLabel" TargetType="TextBlock" BasedOn="{StaticResource Muted}">
+            <Setter Property="Margin" Value="0,6,16,0" />
+        </Style>
+        <Style x:Key="SummaryValue" TargetType="TextBlock" BasedOn="{StaticResource Body}">
+            <Setter Property="Margin" Value="0,6,0,0" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+
+        <!-- Bloco de leitura ao vivo -->
+        <Style x:Key="TileValue" TargetType="TextBlock" BasedOn="{StaticResource Mono}">
+            <Setter Property="FontSize" Value="22" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Margin" Value="0,2,0,0" />
+        </Style>
+    </UserControl.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="4,0,8,8">
+
+            <!-- ======================================================== cabeçalho -->
+            <Border Style="{StaticResource Hero}" Padding="28,24">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Image Source="{StaticResource LogoImage}" Width="72" Height="72" VerticalAlignment="Center" />
+                    <StackPanel Grid.Column="1" Margin="20,0,0,0" VerticalAlignment="Center">
+                        <TextBlock Style="{StaticResource H1}" Text="{loc:Tr ov.hello}" />
+                        <TextBlock Style="{StaticResource Muted}" Margin="0,4,0,0" Text="{loc:Tr ov.subtitle}" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- ======================================================== aviso de sensores -->
+            <Border Style="{StaticResource Banner}" Margin="0,12,0,0"
+                    Visibility="{Binding Sensors.HasCpuProblem, Converter={StaticResource BoolToVis}}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Style="{StaticResource Glyph}" Foreground="{DynamicResource Warn}" Text="&#xE7BA;" Margin="0,0,12,0" />
+                    <StackPanel Grid.Column="1">
+                        <TextBlock FontWeight="SemiBold" Text="{loc:Tr ov.sensorWarning}" />
+                        <TextBlock Style="{StaticResource Muted}" Text="{Binding Sensors.ProblemText}" />
+                    </StackPanel>
+                    <Button Grid.Column="2" Margin="12,0,0,0" VerticalAlignment="Center" Content="{loc:Tr ov.seeSensors}"
+                            Command="{Binding OpenCommand}" CommandParameter="sensors" />
+                </Grid>
+            </Border>
+
+            <Grid Margin="0,12,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="5*" />
+                    <ColumnDefinition Width="12" />
+                    <ColumnDefinition Width="4*" />
+                </Grid.ColumnDefinitions>
+
+                <!-- ==================================================== seu PC -->
+                <Border Style="{StaticResource Card}">
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource H2}" Text="{loc:Tr ov.yourPc}" />
+                        <TextBlock Style="{StaticResource Muted}" Margin="0,6,0,0" Text="{loc:Tr ov.loading}"
+                                   Visibility="{Binding IsLoading, Converter={StaticResource BoolToVis}}" />
+                        <Grid Margin="0,6,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition /><RowDefinition /><RowDefinition /><RowDefinition /><RowDefinition /><RowDefinition />
+                            </Grid.RowDefinitions>
+                            <TextBlock Grid.Row="0" Style="{StaticResource SummaryLabel}" Text="{loc:Tr ov.cpu}" />
+                            <TextBlock Grid.Row="0" Grid.Column="1" Style="{StaticResource SummaryValue}" Text="{Binding Cpu}" />
+                            <TextBlock Grid.Row="1" Style="{StaticResource SummaryLabel}" Text="{loc:Tr ov.gpu}" />
+                            <TextBlock Grid.Row="1" Grid.Column="1" Style="{StaticResource SummaryValue}" Text="{Binding Gpu}" />
+                            <TextBlock Grid.Row="2" Style="{StaticResource SummaryLabel}" Text="{loc:Tr ov.ram}" />
+                            <TextBlock Grid.Row="2" Grid.Column="1" Style="{StaticResource SummaryValue}" Text="{Binding Ram}" />
+                            <TextBlock Grid.Row="3" Style="{StaticResource SummaryLabel}" Text="{loc:Tr ov.board}" />
+                            <TextBlock Grid.Row="3" Grid.Column="1" Style="{StaticResource SummaryValue}" Text="{Binding Board}" />
+                            <TextBlock Grid.Row="4" Style="{StaticResource SummaryLabel}" Text="{loc:Tr ov.storage}" />
+                            <TextBlock Grid.Row="4" Grid.Column="1" Style="{StaticResource SummaryValue}" Text="{Binding Storage}" />
+                            <TextBlock Grid.Row="5" Style="{StaticResource SummaryLabel}" Text="{loc:Tr ov.os}" />
+                            <TextBlock Grid.Row="5" Grid.Column="1" Style="{StaticResource SummaryValue}" Text="{Binding Os}" />
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- ==================================================== pontuação -->
+                <Border Grid.Column="2" Style="{StaticResource Card}">
+                    <DockPanel>
+                        <Button DockPanel.Dock="Bottom" HorizontalAlignment="Left" Margin="0,16,0,0" Style="{StaticResource PrimaryButton}"
+                                Command="{Binding OpenCommand}" CommandParameter="bench.cpu">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Style="{StaticResource Glyph}" Foreground="{DynamicResource OnAccent}" FontSize="13" Text="&#xE768;" />
+                                <TextBlock Margin="8,0,0,0" Text="{loc:Tr ov.runBench}" />
+                            </StackPanel>
+                        </Button>
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource H2}" Text="{loc:Tr ov.lastScore}" />
+                            <TextBlock Style="{StaticResource Muted}" Margin="0,8,0,0" Text="{loc:Tr ov.noScore}"
+                                       Visibility="{Binding HasScore, Converter={StaticResource BoolToVis}, ConverterParameter=invert}" />
+                            <Grid Margin="0,8,0,0" Visibility="{Binding HasScore, Converter={StaticResource BoolToVis}}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel>
+                                    <TextBlock Style="{StaticResource Muted}" Text="{loc:Tr cpu.mode.multi}" />
+                                    <TextBlock Style="{StaticResource BigNumber}" FontSize="34" Text="{Binding MultiScore}" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="1">
+                                    <TextBlock Style="{StaticResource Muted}" Text="{loc:Tr cpu.mode.single}" />
+                                    <TextBlock Style="{StaticResource BigNumber}" FontSize="34" Text="{Binding SingleScore}" />
+                                </StackPanel>
+                            </Grid>
+                        </StackPanel>
+                    </DockPanel>
+                </Border>
+            </Grid>
+
+            <!-- ======================================================== monitor ao vivo -->
+            <Border Style="{StaticResource Card}" Margin="0,12,0,0">
+                <StackPanel>
+                    <DockPanel>
+                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+                            <Border Width="10" Height="10" CornerRadius="5" Background="{DynamicResource Accent1}" />
+                            <TextBlock Margin="6,0,16,0" Text="CPU" Style="{StaticResource Muted}" />
+                            <Border Width="10" Height="10" CornerRadius="5" Background="#9B6BFF" />
+                            <TextBlock Margin="6,0,0,0" Text="GPU" Style="{StaticResource Muted}" />
+                        </StackPanel>
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource H2}" Text="{loc:Tr ov.live}" />
+                            <TextBlock Style="{StaticResource Muted}" Text="{loc:Tr ov.chartLegend}" />
+                        </StackPanel>
+                    </DockPanel>
+
+                    <UniformGrid Columns="6" Margin="0,14,0,0">
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource Muted}" Text="{loc:Tr ov.cpuTemp}" />
+                            <TextBlock Style="{StaticResource TileValue}" Foreground="{DynamicResource Accent1}" Text="{Binding Sensors.CpuTempText}" />
+                        </StackPanel>
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource Muted}" Text="{loc:Tr ov.cpuLoad}" />
+                            <TextBlock Style="{StaticResource TileValue}" Text="{Binding Sensors.CpuLoadText}" />
+                        </StackPanel>
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource Muted}" Text="{loc:Tr ov.cpuClock}" />
+                            <TextBlock Style="{StaticResource TileValue}" Text="{Binding Sensors.CpuClockText}" />
+                        </StackPanel>
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource Muted}" Text="{loc:Tr ov.cpuPower}" />
+                            <TextBlock Style="{StaticResource TileValue}" Text="{Binding Sensors.CpuPowerText}" />
+                        </StackPanel>
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource Muted}" Text="{loc:Tr ov.gpuTemp}" />
+                            <TextBlock Style="{StaticResource TileValue}" Foreground="#9B6BFF" Text="{Binding Sensors.GpuTempText}" />
+                        </StackPanel>
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource Muted}" Text="{loc:Tr ov.gpuLoad}" />
+                            <TextBlock Style="{StaticResource TileValue}" Text="{Binding Sensors.GpuLoadText}" />
+                        </StackPanel>
+                    </UniformGrid>
+
+                    <c:LineChart Height="180" Margin="0,16,0,0"
+                                 Series="{Binding Sensors.TemperatureSeries}"
+                                 Revision="{Binding Sensors.Revision}"
+                                 GridBrush="{DynamicResource Line}"
+                                 LabelBrush="{DynamicResource Muted}" />
+                    <TextBlock Style="{StaticResource Muted}" Margin="0,8,0,0" Text="{Binding Sensors.StatusText}" />
+                </StackPanel>
+            </Border>
+
+            <!-- ======================================================== atalhos -->
+            <TextBlock Style="{StaticResource H2}" Margin="4,20,0,10" Text="{loc:Tr ov.shortcuts}" />
+            <ItemsControl ItemsSource="{Binding Shortcuts}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid Columns="5" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="{x:Type vm:NavItem}">
+                        <Button Margin="0,0,10,10" Padding="16,14" HorizontalContentAlignment="Stretch"
+                                Background="{DynamicResource Card}"
+                                Command="{Binding DataContext.OpenCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                CommandParameter="{Binding Key}">
+                            <StackPanel HorizontalAlignment="Left">
+                                <TextBlock Style="{StaticResource Glyph}" HorizontalAlignment="Left" FontSize="20"
+                                           Foreground="{DynamicResource Accent1}" Text="{Binding Glyph}" />
+                                <TextBlock Margin="0,8,0,0" Text="{Binding Title}" />
+                            </StackPanel>
+                        </Button>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

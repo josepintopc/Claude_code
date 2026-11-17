@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <RootNamespace>SupernovaBench.App</RootNamespace>
+    <AssemblyName>SupernovaBench</AssemblyName>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>Assets\supernova.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\supernova.ico" />
+    <Resource Include="Assets\supernova.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SupernovaBench.Core\SupernovaBench.Core.csproj" />
+    <ProjectReference Include="..\SupernovaBench.Hardware\SupernovaBench.Hardware.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2" />
+  </ItemGroup>
+
+</Project>

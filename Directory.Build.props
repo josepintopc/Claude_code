@@ -1,0 +1,16 @@
+<Project>
+  <PropertyGroup>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <Version>0.1.0</Version>
+    <Product>Supernova Bench</Product>
+    <Company>Supernova Bench</Company>
+    <Copyright>Copyright (c) 2026 Supernova Bench contributors</Copyright>
+    <!-- Permite compilar os projetos net8.0-windows (WPF) também em Linux/macOS (CI e testes). -->
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <!-- Benchmarks precisam do JIT otimizado mesmo em Debug. -->
+    <Optimize>true</Optimize>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+  </PropertyGroup>
+</Project>

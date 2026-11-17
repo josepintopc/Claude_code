@@ -1,0 +1,143 @@
+<Window x:Class="SupernovaBench.App.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:loc="clr-namespace:SupernovaBench.App.Localization"
+        xmlns:vm="clr-namespace:SupernovaBench.App.ViewModels"
+        xmlns:views="clr-namespace:SupernovaBench.App.Views"
+        xmlns:c="clr-namespace:SupernovaBench.App.Controls"
+        Title="Supernova Bench"
+        Width="1320" Height="840" MinWidth="1080" MinHeight="660"
+        WindowStartupLocation="CenterScreen"
+        Background="{DynamicResource Bg}"
+        Foreground="{DynamicResource Fg}"
+        FontFamily="{StaticResource UiFont}"
+        FontSize="14"
+        Icon="pack://application:,,,/SupernovaBench;component/Assets/supernova.ico"
+        UseLayoutRounding="True"
+        TextOptions.TextFormattingMode="Display">
+
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="44" ResizeBorderThickness="6" GlassFrameThickness="0" CornerRadius="0"
+                      UseAeroCaptionButtons="False" />
+    </WindowChrome.WindowChrome>
+
+    <Window.Resources>
+        <c:BoolToVisibilityConverter x:Key="BoolToVis" />
+
+        <DataTemplate DataType="{x:Type vm:OverviewViewModel}"><views:OverviewView /></DataTemplate>
+        <DataTemplate DataType="{x:Type vm:HardwareViewModel}"><views:HardwareView /></DataTemplate>
+        <DataTemplate DataType="{x:Type vm:SensorsViewModel}"><views:SensorsView /></DataTemplate>
+        <DataTemplate DataType="{x:Type vm:CpuBenchViewModel}"><views:CpuBenchView /></DataTemplate>
+        <DataTemplate DataType="{x:Type vm:ReportsViewModel}"><views:ReportsView /></DataTemplate>
+        <DataTemplate DataType="{x:Type vm:SettingsViewModel}"><views:SettingsView /></DataTemplate>
+        <DataTemplate DataType="{x:Type vm:ComingSoonViewModel}"><views:ComingSoonView /></DataTemplate>
+    </Window.Resources>
+
+    <Border x:Name="Root">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="44" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <!-- ============================================================ barra de título -->
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <StackPanel Orientation="Horizontal" Margin="18,0,0,0" VerticalAlignment="Center">
+                    <Image Source="{StaticResource LogoImage}" Width="22" Height="22" />
+                    <TextBlock Margin="10,0,0,0" VerticalAlignment="Center" FontSize="15">
+                        <Run Text="Supernova" FontWeight="Bold" /><Run Text=" Bench" FontWeight="Light" />
+                    </TextBlock>
+                    <TextBlock Margin="14,0,0,0" VerticalAlignment="Center" Foreground="{DynamicResource Muted}"
+                               Text="{Binding PageTitle, StringFormat='·  {0}'}" />
+                </StackPanel>
+                <StackPanel Grid.Column="2" Orientation="Horizontal">
+                    <Button Style="{StaticResource TitleBarButton}" FontSize="13" Content="{Binding ThemeGlyph}"
+                            Command="{Binding ToggleThemeCommand}" ToolTip="{loc:Tr title.toggleTheme}"
+                            WindowChrome.IsHitTestVisibleInChrome="True" />
+                    <Button Style="{StaticResource TitleBarButton}" Content="&#xE921;" Click="Minimize_Click"
+                            ToolTip="{loc:Tr title.minimize}" WindowChrome.IsHitTestVisibleInChrome="True" />
+                    <Button x:Name="MaxButton" Style="{StaticResource TitleBarButton}" Content="&#xE922;" Click="Maximize_Click"
+                            ToolTip="{loc:Tr title.maximize}" WindowChrome.IsHitTestVisibleInChrome="True" />
+                    <Button Style="{StaticResource CloseButton}" Content="&#xE8BB;" Click="Close_Click"
+                            ToolTip="{loc:Tr title.close}" WindowChrome.IsHitTestVisibleInChrome="True" />
+                </StackPanel>
+            </Grid>
+
+            <!-- ============================================================ conteúdo -->
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="256" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <!-- menu lateral -->
+                <Border Margin="12,0,0,12" Background="{DynamicResource Panel}" BorderBrush="{DynamicResource Line}"
+                        BorderThickness="1" CornerRadius="20">
+                    <DockPanel>
+                        <!-- mini-monitor -->
+                        <Border DockPanel.Dock="Bottom" Margin="12" Padding="14,12" CornerRadius="14"
+                                Background="{DynamicResource Card}">
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource Caption}" Text="{loc:Tr live.title}" />
+                                <Grid Margin="0,8,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Text="CPU" Foreground="{DynamicResource Accent1}" FontWeight="SemiBold" />
+                                        <TextBlock Style="{StaticResource Mono}" FontSize="16" Text="{Binding Sensors.CpuTempText}" />
+                                        <TextBlock Style="{StaticResource Mono}" Foreground="{DynamicResource Muted}" Text="{Binding Sensors.CpuLoadText}" />
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="1">
+                                        <TextBlock Text="GPU" Foreground="{DynamicResource Accent3}" FontWeight="SemiBold" />
+                                        <TextBlock Style="{StaticResource Mono}" FontSize="16" Text="{Binding Sensors.GpuTempText}" />
+                                        <TextBlock Style="{StaticResource Mono}" Foreground="{DynamicResource Muted}" Text="{Binding Sensors.GpuLoadText}" />
+                                    </StackPanel>
+                                </Grid>
+                                <TextBlock Margin="0,8,0,0" FontSize="11" Style="{StaticResource Muted}" Text="{loc:Tr live.admin}"
+                                           Visibility="{Binding Sensors.IsElevated, Converter={StaticResource BoolToVis}, ConverterParameter=invert}" />
+                            </StackPanel>
+                        </Border>
+
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="10,10,10,0">
+                            <ItemsControl ItemsSource="{Binding Groups}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate DataType="{x:Type vm:NavGroup}">
+                                        <StackPanel Margin="0,0,0,10">
+                                            <TextBlock Style="{StaticResource Caption}" Margin="12,6,0,4" Text="{Binding Title}" />
+                                            <ItemsControl ItemsSource="{Binding Items}">
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate DataType="{x:Type vm:NavItem}">
+                                                        <RadioButton Style="{StaticResource NavButton}" GroupName="nav" Tag="{Binding Glyph}"
+                                                                     IsChecked="{Binding IsSelected, Mode=TwoWay}">
+                                                            <DockPanel LastChildFill="True">
+                                                                <Border DockPanel.Dock="Right" Style="{StaticResource Badge}"
+                                                                        Visibility="{Binding IsSoon, Converter={StaticResource BoolToVis}}">
+                                                                    <TextBlock FontSize="10" Foreground="{DynamicResource Muted}" Text="{loc:Tr soon.badge}" />
+                                                                </Border>
+                                                                <TextBlock Text="{Binding Title}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+                                                            </DockPanel>
+                                                        </RadioButton>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </DockPanel>
+                </Border>
+
+                <!-- página atual -->
+                <ContentControl Grid.Column="1" Margin="12,0,12,12" Content="{Binding CurrentPage}" Focusable="False" />
+            </Grid>
+        </Grid>
+    </Border>
+</Window>
