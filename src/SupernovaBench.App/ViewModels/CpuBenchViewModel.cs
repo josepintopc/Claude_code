@@ -238,7 +238,7 @@ public sealed partial class CpuBenchViewModel : LocalizedViewModel
             string detail = r.Imported
                 ? $"{Loc.T("cpu.ranking.imported")} · {r.Threads} threads"
                 : $"{Loc.T("cpu.ranking.thisPc")} · {r.Threads} threads · {r.Timestamp.ToString("d", Loc.Culture)}";
-            Ranking.Add(new RankingRow(pos++, r.CpuName, detail, r.Score.ToString("N0", Loc.Culture),
+            Ranking.Add(new RankingRow(pos++, r.DeviceName, detail, r.Score.ToString("N0", Loc.Culture),
                                        max > 0 ? 100 * r.Score / max : 0, r.Id == _highlight, r.Imported));
         }
     }

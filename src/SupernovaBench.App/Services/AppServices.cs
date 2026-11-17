@@ -13,6 +13,7 @@ public static class AppServices
     public static ResultHistory History { get; private set; } = null!;
     public static SensorService Sensors { get; private set; } = null!;
     public static SystemInfoService SystemInfo { get; } = new();
+    public static GpuService Gpu { get; } = new();
     public static MainViewModel? Main { get; set; }
 
     /// <summary>Só lê as preferências e aplica o idioma (usado quando o app já está aberto).</summary>

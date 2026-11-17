@@ -36,14 +36,14 @@ public sealed partial class MainViewModel : LocalizedViewModel
             new NavGroup("nav.section.benchmark", new[]
             {
                 I("bench.cpu", "nav.bench.cpu", GCpu),
-                I("bench.gpu", "nav.bench.gpu", GGpu, 2),
+                I("bench.gpu", "nav.bench.gpu", GGpu),
                 I("bench.memory", "nav.bench.memory", GMemory, 3),
                 I("bench.disk", "nav.bench.disk", GDisk, 3),
             }),
             new NavGroup("nav.section.stress", new[]
             {
                 I("stress.cpu", "nav.stress.cpu", GStress, 3),
-                I("stress.gpu", "nav.stress.gpu", GStress, 2),
+                I("stress.gpu", "nav.stress.gpu", GStress),
                 I("stress.ram", "nav.stress.ram", GMemory, 3),
             }),
             new NavGroup("nav.section.games", new[]
@@ -100,6 +100,8 @@ public sealed partial class MainViewModel : LocalizedViewModel
             "hardware" => new HardwareViewModel(),
             "sensors" => new SensorsViewModel(),
             "bench.cpu" => CpuBench,
+            "bench.gpu" => GpuBench,
+            "stress.gpu" => GpuStress,
             "reports" => new ReportsViewModel(),
             "settings" => new SettingsViewModel(this),
             _ => new ComingSoonViewModel(item, _items.Values.Where(i => i.IsSoon).ToList()),
@@ -112,9 +114,20 @@ public sealed partial class MainViewModel : LocalizedViewModel
     public CpuBenchViewModel CpuBench => _cpuBench ??= new CpuBenchViewModel();
     private CpuBenchViewModel? _cpuBench;
 
-    public bool IsBenchmarkRunning => _cpuBench?.IsRunning == true;
+    public GpuBenchViewModel GpuBench => _gpuBench ??= new GpuBenchViewModel();
+    private GpuBenchViewModel? _gpuBench;
 
-    public void StopBenchmarks() => _cpuBench?.StopCommand.Execute(null);
+    public GpuStressViewModel GpuStress => _gpuStress ??= new GpuStressViewModel();
+    private GpuStressViewModel? _gpuStress;
+
+    public bool IsBenchmarkRunning => _cpuBench?.IsRunning == true || _gpuBench?.IsRunning == true || _gpuStress?.IsRunning == true;
+
+    public void StopBenchmarks()
+    {
+        _cpuBench?.StopCommand.Execute(null);
+        _gpuBench?.StopNow();
+        _gpuStress?.StopNow();
+    }
 
     [RelayCommand]
     private void ToggleTheme()

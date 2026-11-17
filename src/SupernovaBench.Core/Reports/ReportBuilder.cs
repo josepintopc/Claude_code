@@ -76,15 +76,15 @@ public static class ReportBuilder
         else
         {
             sb.Append("<table><thead><tr><th>").Append(E(Loc.T("report.col.test"))).Append("</th><th>")
-              .Append(E(Loc.T("report.col.score"))).Append("</th><th>").Append(E(Loc.T("report.col.cpu"))).Append("</th><th>")
-              .Append(E(Loc.T("report.col.threads"))).Append("</th><th>").Append(E(Loc.T("report.col.time"))).Append("</th><th>")
+              .Append(E(Loc.T("report.col.score"))).Append("</th><th>").Append(E(Loc.T("report.col.device"))).Append("</th><th>")
+              .Append(E(Loc.T("report.col.details"))).Append("</th><th>").Append(E(Loc.T("report.col.time"))).Append("</th><th>")
               .Append(E(Loc.T("report.col.date"))).Append("</th></tr></thead><tbody>");
             foreach (var r in report.Results.OrderBy(r => r.Test).ThenByDescending(r => r.Score))
             {
                 sb.Append("<tr><td>").Append(E(Loc.T(TestIds.NameKey(r.Test))));
                 if (r.Imported) sb.Append(" <em>(").Append(E(Loc.T("report.imported"))).Append(")</em>");
                 sb.Append("</td><td class=\"score\">").Append(E(r.Score.ToString("N0", culture))).Append(' ').Append(E(r.Unit))
-                  .Append("</td><td>").Append(E(r.CpuName)).Append("</td><td>").Append(r.Threads)
+                  .Append("</td><td>").Append(E(r.DeviceName)).Append("</td><td>").Append(E(Details(r, culture)))
                   .Append("</td><td>").Append(E(r.Seconds.ToString("N1", culture))).Append(" s</td><td>")
                   .Append(E(r.Timestamp.ToString("g", culture))).Append("</td></tr>");
             }
@@ -116,6 +116,20 @@ public static class ReportBuilder
 
         sb.Append("<footer>").Append(E(Loc.T("report.privacy"))).Append("</footer></main></body></html>");
         return sb.ToString();
+    }
+
+    /// <summary>Detalhes do resultado: threads (CPU) ou resolução, FPS médio e 1% low (GPU).</summary>
+    public static string Details(BenchmarkResult r, System.Globalization.CultureInfo culture)
+    {
+        if (r.AvgFps is { } avg)
+        {
+            var parts = new List<string>();
+            if (!string.IsNullOrEmpty(r.Resolution)) parts.Add(r.Resolution);
+            parts.Add(Loc.T("report.fps", avg.ToString("N0", culture)));
+            if (r.Low1Fps is { } low) parts.Add(Loc.T("report.low1", low.ToString("N0", culture)));
+            return string.Join(" · ", parts);
+        }
+        return Loc.T("report.threads", r.Threads);
     }
 
     private static void AppendNode(StringBuilder sb, InfoNode node, Func<string?, string> e)

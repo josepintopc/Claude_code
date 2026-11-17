@@ -6,8 +6,11 @@ public static class TestIds
     public const string CpuMulti = "cpu.multi";
     public const string CpuSingle = "cpu.single";
     public const string CpuSustained = "cpu.sustained";
+    public const string GpuScene = "gpu.scene";
 
-    public static readonly IReadOnlyList<string> All = new[] { CpuMulti, CpuSingle, CpuSustained };
+    public static readonly IReadOnlyList<string> All = new[] { CpuMulti, CpuSingle, CpuSustained, GpuScene };
+
+    public static bool IsGpu(string testId) => testId.StartsWith("gpu.", StringComparison.Ordinal);
 
     /// <summary>Chave de tradução com o nome amigável do teste.</summary>
     public static string NameKey(string testId) => "test." + testId;
@@ -23,6 +26,19 @@ public sealed record BenchmarkResult
     public DateTimeOffset Timestamp { get; init; } = DateTimeOffset.Now;
 
     public string CpuName { get; init; } = "";
+
+    /// <summary>Placa de vídeo usada (testes de GPU).</summary>
+    public string? GpuName { get; init; }
+
+    /// <summary>FPS médio e "1% low" (testes de GPU).</summary>
+    public double? AvgFps { get; init; }
+    public double? Low1Fps { get; init; }
+
+    /// <summary>Resolução de renderização (testes de GPU), ex.: "1920x1080".</summary>
+    public string? Resolution { get; init; }
+
+    /// <summary>Hardware avaliado pelo teste: a GPU nos testes de GPU, a CPU nos de CPU.</summary>
+    public string DeviceName => TestIds.IsGpu(Test) && !string.IsNullOrWhiteSpace(GpuName) ? GpuName! : CpuName;
     public int Threads { get; init; }
     public double Seconds { get; init; }
     public long Samples { get; init; }

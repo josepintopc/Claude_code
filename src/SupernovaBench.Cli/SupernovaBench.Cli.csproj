@@ -2,13 +2,15 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net8.0</TargetFramework>
+    <!-- net8.0-windows para usar os testes de GPU (Direct3D); os comandos de CPU continuam rodando em Linux/macOS. -->
+    <TargetFramework>net8.0-windows</TargetFramework>
     <RootNamespace>SupernovaBench.Cli</RootNamespace>
     <AssemblyName>supernova-cli</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\SupernovaBench.Core\SupernovaBench.Core.csproj" />
+    <ProjectReference Include="..\SupernovaBench.Graphics\SupernovaBench.Graphics.csproj" />
   </ItemGroup>
 
 </Project>

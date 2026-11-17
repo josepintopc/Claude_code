@@ -40,6 +40,13 @@ public sealed partial class SensorService : ObservableObject, IDisposable
     [ObservableProperty] private string _installStatus = "";
 
     public int IntervalMs { get; set; } = 1000;
+
+    /// <summary>Pausa a leitura do LibreHardwareMonitor (ex.: durante o benchmark de GPU, para não perturbar os tempos de frame).</summary>
+    public bool IsPaused { get; private set; }
+
+    public void Pause() => IsPaused = true;
+
+    public void Resume() => IsPaused = false;
     public bool IsElevated { get; } = Elevation.IsElevated;
 
     public event EventHandler? Updated;
@@ -68,6 +75,11 @@ public sealed partial class SensorService : ObservableObject, IDisposable
 
             while (!_cts.IsCancellationRequested)
             {
+                if (IsPaused)
+                {
+                    await Task.Delay(250, _cts.Token);
+                    continue;
+                }
                 var poll = await Task.Run(Monitor.Poll);
                 if (_cts.IsCancellationRequested) break;
                 Monitor.Apply(poll);

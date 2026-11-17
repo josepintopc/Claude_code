@@ -28,6 +28,8 @@
         <DataTemplate DataType="{x:Type vm:HardwareViewModel}"><views:HardwareView /></DataTemplate>
         <DataTemplate DataType="{x:Type vm:SensorsViewModel}"><views:SensorsView /></DataTemplate>
         <DataTemplate DataType="{x:Type vm:CpuBenchViewModel}"><views:CpuBenchView /></DataTemplate>
+        <DataTemplate DataType="{x:Type vm:GpuBenchViewModel}"><views:GpuBenchView /></DataTemplate>
+        <DataTemplate DataType="{x:Type vm:GpuStressViewModel}"><views:GpuStressView /></DataTemplate>
         <DataTemplate DataType="{x:Type vm:ReportsViewModel}"><views:ReportsView /></DataTemplate>
         <DataTemplate DataType="{x:Type vm:SettingsViewModel}"><views:SettingsView /></DataTemplate>
         <DataTemplate DataType="{x:Type vm:ComingSoonViewModel}"><views:ComingSoonView /></DataTemplate>

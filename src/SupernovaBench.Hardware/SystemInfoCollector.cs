@@ -350,9 +350,6 @@ public static class SystemInfoCollector
             gpu.Add("PNP ID", S(g, "PNPDeviceID"), sensitive: true);
             nodes.Add(gpu);
         }
-        var note = new InfoNode { Label = T("soon.badge") };
-        note.Add("GPU-Z", T("hw.gpu.phase2"));
-        nodes.Add(note);
     }
 
     private static Dictionary<string, double> ReadVramFromRegistry()

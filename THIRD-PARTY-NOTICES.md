@@ -5,9 +5,10 @@ Supernova Bench includes or is derived from the following works.
 
 ## ResetExplode — MIT
 
-O motor do benchmark de CPU (path tracer), a coleta de informações via WMI e o monitor de sensores foram
-baseados no ResetExplode. / The CPU benchmark engine (path tracer), the WMI information collector and the
-sensor monitor are based on ResetExplode.
+O motor do benchmark de CPU (path tracer), a coleta de informações via WMI, o monitor de sensores, o stress de GPU,
+a cena 3D do benchmark de GPU, o banco de especificações de GPUs e a integração com NVML foram baseados no ResetExplode.
+/ The CPU benchmark engine (path tracer), the WMI collector, the sensor monitor, the GPU stress test, the GPU benchmark
+3D scene, the GPU spec database and the NVML integration are based on ResetExplode.
 
 https://github.com/GustavoReset/ResetExplode
 
@@ -42,6 +43,10 @@ O código-fonte está disponível em / Source code is available at:
 https://github.com/LibreHardwareMonitor/LibreHardwareMonitor
 
 Licença / License: Mozilla Public License 2.0 — https://www.mozilla.org/MPL/2.0/
+
+## Vortice.Windows — MIT
+
+Bindings de Direct3D 11/12, DXGI e D3DCompiler. https://github.com/amerkoleci/Vortice.Windows — Copyright (c) Amer Koleci and Contributors.
 
 ## CommunityToolkit.Mvvm — MIT
 

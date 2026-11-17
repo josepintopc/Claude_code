@@ -116,6 +116,7 @@
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
                                 <StackPanel>
                                     <TextBlock Style="{StaticResource Muted}" Text="{loc:Tr cpu.mode.multi}" />
@@ -124,6 +125,10 @@
                                 <StackPanel Grid.Column="1">
                                     <TextBlock Style="{StaticResource Muted}" Text="{loc:Tr cpu.mode.single}" />
                                     <TextBlock Style="{StaticResource BigNumber}" FontSize="34" Text="{Binding SingleScore}" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="2">
+                                    <TextBlock Style="{StaticResource Muted}" Text="{loc:Tr ov.gpuScore}" />
+                                    <TextBlock Style="{StaticResource BigNumber}" FontSize="34" Text="{Binding GpuScore}" />
                                 </StackPanel>
                             </Grid>
                         </StackPanel>

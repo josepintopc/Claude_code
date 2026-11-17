@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Text.Json;
+using SupernovaBench.Cli;
 using SupernovaBench.Core;
 using SupernovaBench.Core.Benchmarks;
 using SupernovaBench.Core.Benchmarks.Cpu;
@@ -94,6 +95,19 @@ if (argList.Count >= 2 && argList[0] == "bench" && argList[1] == "cpu")
         Console.WriteLine($"  {Loc.T("cpu.score")}: {result.Score.ToString("N0", Loc.Culture)} pts  ({result.Seconds.ToString("N1", Loc.Culture)} s, {result.Passes}x)");
     }
     return 0;
+}
+
+if (argList.Count >= 2 && argList[0] == "gpu" && argList[1] == "info")
+{
+    if (!OperatingSystem.IsWindows()) { Console.Error.WriteLine(Loc.T("cli.gpu.notWindows")); return 3; }
+    return GpuCommands.Info();
+}
+
+if (argList.Count >= 2 && argList[0] == "bench" && argList[1] == "gpu")
+{
+    if (!OperatingSystem.IsWindows()) { Console.Error.WriteLine(Loc.T("cli.gpu.notWindows")); return 3; }
+    int seconds = int.TryParse(Opt("--seconds"), out var sec) && sec > 0 ? sec : 30;
+    return GpuCommands.Bench(Opt("--res"), seconds, Flag("--warp"), Flag("--headless"), Flag("--json"), Flag("--save"));
 }
 
 Console.Error.WriteLine(Loc.T("cli.unknown"));

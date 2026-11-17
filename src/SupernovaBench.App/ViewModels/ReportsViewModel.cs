@@ -149,10 +149,10 @@ public sealed partial class ReportsViewModel : LocalizedViewModel
         History.Clear();
         foreach (var r in AppServices.History.All)
         {
-            string detail = $"{r.Threads} threads · {r.Seconds.ToString("N1", Loc.Culture)} s · {r.Timestamp.ToString("g", Loc.Culture)}";
+            string detail = $"{ReportBuilder.Details(r, Loc.Culture)} · {r.Seconds.ToString("N1", Loc.Culture)} s · {r.Timestamp.ToString("g", Loc.Culture)}";
             if (r.Imported) detail = $"{Loc.T("cpu.ranking.imported")} · {detail}";
             History.Add(new HistoryRow(r.Id, Loc.T(TestIds.NameKey(r.Test)), $"{r.Score.ToString("N0", Loc.Culture)} {r.Unit}",
-                                       r.CpuName, detail, r.Imported));
+                                       r.DeviceName, detail, r.Imported));
         }
         IsEmpty = History.Count == 0;
     }

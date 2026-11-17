@@ -33,11 +33,19 @@ jobs:
       - name: Compilar
         run: dotnet build SupernovaBench.sln -c Release --no-restore -nologo
 
-      - name: Testes
+      - name: Testes (núcleo)
         run: dotnet test tests/SupernovaBench.Core.Tests -c Release --no-build -nologo --logger "console;verbosity=normal"
 
-      - name: Benchmark rápido pela linha de comando (fumaça)
+      - name: Testes (Windows / Direct3D no WARP)
+        run: dotnet test tests/SupernovaBench.Windows.Tests -c Release --no-build -nologo --logger "console;verbosity=normal"
+
+      - name: Benchmark de CPU pela linha de comando (fumaça)
         run: dotnet run --project src/SupernovaBench.Cli -c Release --no-build -- bench cpu --quick --lang pt-BR
+
+      - name: Benchmark de GPU no WARP pela linha de comando (fumaça)
+        run: |
+          dotnet run --project src/SupernovaBench.Cli -c Release --no-build -- gpu info --lang pt-BR
+          dotnet run --project src/SupernovaBench.Cli -c Release --no-build -- bench gpu --warp --headless --seconds 3 --lang pt-BR
 
       - name: Publicar SupernovaBench.exe
         run: >
