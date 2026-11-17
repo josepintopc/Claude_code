@@ -8,7 +8,7 @@
         <c:BoolToVisibilityConverter x:Key="BoolToVis" />
 
         <!-- Linha "rótulo / valor" do resumo do PC -->
-        <Style x:Key="SummaryLabel" TargetType="TextBlock" BasedOn="{StaticResource Muted}">
+        <Style x:Key="SummaryLabel" TargetType="TextBlock" BasedOn="{StaticResource TextMuted}">
             <Setter Property="Margin" Value="0,6,16,0" />
         </Style>
         <Style x:Key="SummaryValue" TargetType="TextBlock" BasedOn="{StaticResource Body}">
@@ -37,7 +37,7 @@
                     <Image Source="{StaticResource LogoImage}" Width="72" Height="72" VerticalAlignment="Center" />
                     <StackPanel Grid.Column="1" Margin="20,0,0,0" VerticalAlignment="Center">
                         <TextBlock Style="{StaticResource H1}" Text="{loc:Tr ov.hello}" />
-                        <TextBlock Style="{StaticResource Muted}" Margin="0,4,0,0" Text="{loc:Tr ov.subtitle}" />
+                        <TextBlock Style="{StaticResource TextMuted}" Margin="0,4,0,0" Text="{loc:Tr ov.subtitle}" />
                     </StackPanel>
                 </Grid>
             </Border>
@@ -54,7 +54,7 @@
                     <TextBlock Style="{StaticResource Glyph}" Foreground="{DynamicResource Warn}" Text="&#xE7BA;" Margin="0,0,12,0" />
                     <StackPanel Grid.Column="1">
                         <TextBlock FontWeight="SemiBold" Text="{loc:Tr ov.sensorWarning}" />
-                        <TextBlock Style="{StaticResource Muted}" Text="{Binding Sensors.ProblemText}" />
+                        <TextBlock Style="{StaticResource TextMuted}" Text="{Binding Sensors.ProblemText}" />
                     </StackPanel>
                     <Button Grid.Column="2" Margin="12,0,0,0" VerticalAlignment="Center" Content="{loc:Tr ov.seeSensors}"
                             Command="{Binding OpenCommand}" CommandParameter="sensors" />
@@ -69,10 +69,10 @@
                 </Grid.ColumnDefinitions>
 
                 <!-- ==================================================== seu PC -->
-                <Border Style="{StaticResource Card}">
+                <Border Style="{StaticResource CardPanel}">
                     <StackPanel>
                         <TextBlock Style="{StaticResource H2}" Text="{loc:Tr ov.yourPc}" />
-                        <TextBlock Style="{StaticResource Muted}" Margin="0,6,0,0" Text="{loc:Tr ov.loading}"
+                        <TextBlock Style="{StaticResource TextMuted}" Margin="0,6,0,0" Text="{loc:Tr ov.loading}"
                                    Visibility="{Binding IsLoading, Converter={StaticResource BoolToVis}}" />
                         <Grid Margin="0,6,0,0">
                             <Grid.ColumnDefinitions>
@@ -99,7 +99,7 @@
                 </Border>
 
                 <!-- ==================================================== pontuação -->
-                <Border Grid.Column="2" Style="{StaticResource Card}">
+                <Border Grid.Column="2" Style="{StaticResource CardPanel}">
                     <DockPanel>
                         <Button DockPanel.Dock="Bottom" HorizontalAlignment="Left" Margin="0,16,0,0" Style="{StaticResource PrimaryButton}"
                                 Command="{Binding OpenCommand}" CommandParameter="bench.cpu">
@@ -110,7 +110,7 @@
                         </Button>
                         <StackPanel>
                             <TextBlock Style="{StaticResource H2}" Text="{loc:Tr ov.lastScore}" />
-                            <TextBlock Style="{StaticResource Muted}" Margin="0,8,0,0" Text="{loc:Tr ov.noScore}"
+                            <TextBlock Style="{StaticResource TextMuted}" Margin="0,8,0,0" Text="{loc:Tr ov.noScore}"
                                        Visibility="{Binding HasScore, Converter={StaticResource BoolToVis}, ConverterParameter=invert}" />
                             <Grid Margin="0,8,0,0" Visibility="{Binding HasScore, Converter={StaticResource BoolToVis}}">
                                 <Grid.ColumnDefinitions>
@@ -119,15 +119,15 @@
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
                                 <StackPanel>
-                                    <TextBlock Style="{StaticResource Muted}" Text="{loc:Tr cpu.mode.multi}" />
+                                    <TextBlock Style="{StaticResource TextMuted}" Text="{loc:Tr cpu.mode.multi}" />
                                     <TextBlock Style="{StaticResource BigNumber}" FontSize="34" Text="{Binding MultiScore}" />
                                 </StackPanel>
                                 <StackPanel Grid.Column="1">
-                                    <TextBlock Style="{StaticResource Muted}" Text="{loc:Tr cpu.mode.single}" />
+                                    <TextBlock Style="{StaticResource TextMuted}" Text="{loc:Tr cpu.mode.single}" />
                                     <TextBlock Style="{StaticResource BigNumber}" FontSize="34" Text="{Binding SingleScore}" />
                                 </StackPanel>
                                 <StackPanel Grid.Column="2">
-                                    <TextBlock Style="{StaticResource Muted}" Text="{loc:Tr ov.gpuScore}" />
+                                    <TextBlock Style="{StaticResource TextMuted}" Text="{loc:Tr ov.gpuScore}" />
                                     <TextBlock Style="{StaticResource BigNumber}" FontSize="34" Text="{Binding GpuScore}" />
                                 </StackPanel>
                             </Grid>
@@ -137,44 +137,44 @@
             </Grid>
 
             <!-- ======================================================== monitor ao vivo -->
-            <Border Style="{StaticResource Card}" Margin="0,12,0,0">
+            <Border Style="{StaticResource CardPanel}" Margin="0,12,0,0">
                 <StackPanel>
                     <DockPanel>
                         <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
                             <Border Width="10" Height="10" CornerRadius="5" Background="{DynamicResource Accent1}" />
-                            <TextBlock Margin="6,0,16,0" Text="CPU" Style="{StaticResource Muted}" />
+                            <TextBlock Margin="6,0,16,0" Text="CPU" Style="{StaticResource TextMuted}" />
                             <Border Width="10" Height="10" CornerRadius="5" Background="#9B6BFF" />
-                            <TextBlock Margin="6,0,0,0" Text="GPU" Style="{StaticResource Muted}" />
+                            <TextBlock Margin="6,0,0,0" Text="GPU" Style="{StaticResource TextMuted}" />
                         </StackPanel>
                         <StackPanel>
                             <TextBlock Style="{StaticResource H2}" Text="{loc:Tr ov.live}" />
-                            <TextBlock Style="{StaticResource Muted}" Text="{loc:Tr ov.chartLegend}" />
+                            <TextBlock Style="{StaticResource TextMuted}" Text="{loc:Tr ov.chartLegend}" />
                         </StackPanel>
                     </DockPanel>
 
                     <UniformGrid Columns="6" Margin="0,14,0,0">
                         <StackPanel>
-                            <TextBlock Style="{StaticResource Muted}" Text="{loc:Tr ov.cpuTemp}" />
+                            <TextBlock Style="{StaticResource TextMuted}" Text="{loc:Tr ov.cpuTemp}" />
                             <TextBlock Style="{StaticResource TileValue}" Foreground="{DynamicResource Accent1}" Text="{Binding Sensors.CpuTempText}" />
                         </StackPanel>
                         <StackPanel>
-                            <TextBlock Style="{StaticResource Muted}" Text="{loc:Tr ov.cpuLoad}" />
+                            <TextBlock Style="{StaticResource TextMuted}" Text="{loc:Tr ov.cpuLoad}" />
                             <TextBlock Style="{StaticResource TileValue}" Text="{Binding Sensors.CpuLoadText}" />
                         </StackPanel>
                         <StackPanel>
-                            <TextBlock Style="{StaticResource Muted}" Text="{loc:Tr ov.cpuClock}" />
+                            <TextBlock Style="{StaticResource TextMuted}" Text="{loc:Tr ov.cpuClock}" />
                             <TextBlock Style="{StaticResource TileValue}" Text="{Binding Sensors.CpuClockText}" />
                         </StackPanel>
                         <StackPanel>
-                            <TextBlock Style="{StaticResource Muted}" Text="{loc:Tr ov.cpuPower}" />
+                            <TextBlock Style="{StaticResource TextMuted}" Text="{loc:Tr ov.cpuPower}" />
                             <TextBlock Style="{StaticResource TileValue}" Text="{Binding Sensors.CpuPowerText}" />
                         </StackPanel>
                         <StackPanel>
-                            <TextBlock Style="{StaticResource Muted}" Text="{loc:Tr ov.gpuTemp}" />
+                            <TextBlock Style="{StaticResource TextMuted}" Text="{loc:Tr ov.gpuTemp}" />
                             <TextBlock Style="{StaticResource TileValue}" Foreground="#9B6BFF" Text="{Binding Sensors.GpuTempText}" />
                         </StackPanel>
                         <StackPanel>
-                            <TextBlock Style="{StaticResource Muted}" Text="{loc:Tr ov.gpuLoad}" />
+                            <TextBlock Style="{StaticResource TextMuted}" Text="{loc:Tr ov.gpuLoad}" />
                             <TextBlock Style="{StaticResource TileValue}" Text="{Binding Sensors.GpuLoadText}" />
                         </StackPanel>
                     </UniformGrid>
@@ -184,7 +184,7 @@
                                  Revision="{Binding Sensors.Revision}"
                                  GridBrush="{DynamicResource Line}"
                                  LabelBrush="{DynamicResource Muted}" />
-                    <TextBlock Style="{StaticResource Muted}" Margin="0,8,0,0" Text="{Binding Sensors.StatusText}" />
+                    <TextBlock Style="{StaticResource TextMuted}" Margin="0,8,0,0" Text="{Binding Sensors.StatusText}" />
                 </StackPanel>
             </Border>
 

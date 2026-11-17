@@ -12,7 +12,7 @@
     <DockPanel Margin="4,0,8,8">
         <StackPanel DockPanel.Dock="Top" Margin="0,4,0,14">
             <TextBlock Style="{StaticResource H1}" Text="{loc:Tr rep.title}" />
-            <TextBlock Style="{StaticResource Muted}" Text="{loc:Tr rep.subtitle}" />
+            <TextBlock Style="{StaticResource TextMuted}" Text="{loc:Tr rep.subtitle}" />
         </StackPanel>
 
         <Grid DockPanel.Dock="Top">
@@ -23,13 +23,13 @@
             </Grid.ColumnDefinitions>
 
             <!-- exportar -->
-            <Border Style="{StaticResource Card}">
+            <Border Style="{StaticResource CardPanel}">
                 <StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Style="{StaticResource Glyph}" Foreground="{DynamicResource Accent1}" Text="&#xE8A5;" />
                         <TextBlock Style="{StaticResource H2}" Margin="10,0,0,0" Text="{loc:Tr rep.export}" />
                     </StackPanel>
-                    <TextBlock Style="{StaticResource Muted}" Margin="0,8,0,0" Text="{loc:Tr rep.exportDesc}" />
+                    <TextBlock Style="{StaticResource TextMuted}" Margin="0,8,0,0" Text="{loc:Tr rep.exportDesc}" />
                     <StackPanel Orientation="Horizontal" Margin="0,14,0,0">
                         <Button Style="{StaticResource PrimaryButton}" Command="{Binding ExportHtmlCommand}" Content="{loc:Tr rep.exportHtml}" />
                         <Button Margin="8,0,0,0" Command="{Binding ExportJsonCommand}" Content="{loc:Tr rep.exportJson}" />
@@ -38,13 +38,13 @@
             </Border>
 
             <!-- importar -->
-            <Border Grid.Column="2" Style="{StaticResource Card}">
+            <Border Grid.Column="2" Style="{StaticResource CardPanel}">
                 <StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Style="{StaticResource Glyph}" Foreground="{DynamicResource Accent3}" Text="&#xE8B5;" />
                         <TextBlock Style="{StaticResource H2}" Margin="10,0,0,0" Text="{loc:Tr rep.importTitle}" />
                     </StackPanel>
-                    <TextBlock Style="{StaticResource Muted}" Margin="0,8,0,0" Text="{loc:Tr rep.importDesc}" />
+                    <TextBlock Style="{StaticResource TextMuted}" Margin="0,8,0,0" Text="{loc:Tr rep.importDesc}" />
                     <Button Margin="0,14,0,0" HorizontalAlignment="Left" Command="{Binding ImportCommand}" Content="{loc:Tr rep.import}" />
                 </StackPanel>
             </Border>
@@ -62,7 +62,7 @@
         </Border>
 
         <!-- histórico -->
-        <Border Style="{StaticResource Card}" Margin="0,12,0,0">
+        <Border Style="{StaticResource CardPanel}" Margin="0,12,0,0">
             <DockPanel>
                 <DockPanel DockPanel.Dock="Top">
                     <Button DockPanel.Dock="Right" Style="{StaticResource GhostButton}" Padding="10,4" Command="{Binding ClearCommand}"
@@ -74,7 +74,7 @@
                     </Button>
                     <TextBlock Style="{StaticResource H2}" Text="{loc:Tr rep.history}" />
                 </DockPanel>
-                <TextBlock DockPanel.Dock="Top" Style="{StaticResource Muted}" Margin="0,10,0,0" Text="{loc:Tr rep.empty}"
+                <TextBlock DockPanel.Dock="Top" Style="{StaticResource TextMuted}" Margin="0,10,0,0" Text="{loc:Tr rep.empty}"
                            Visibility="{Binding IsEmpty, Converter={StaticResource BoolToVis}}" />
                 <ScrollViewer Margin="0,8,0,0" VerticalScrollBarVisibility="Auto">
                     <ItemsControl ItemsSource="{Binding History}">
@@ -93,7 +93,7 @@
                                                    Foreground="{DynamicResource Accent1}" Text="{Binding Score}" VerticalAlignment="Center" />
                                         <StackPanel Grid.Column="2" VerticalAlignment="Center">
                                             <TextBlock Text="{Binding Cpu}" TextTrimming="CharacterEllipsis" />
-                                            <TextBlock FontSize="12" Style="{StaticResource Muted}" Text="{Binding Detail}" />
+                                            <TextBlock FontSize="12" Style="{StaticResource TextMuted}" Text="{Binding Detail}" />
                                         </StackPanel>
                                         <Button Grid.Column="3" Style="{StaticResource GhostButton}" Padding="8,4" ToolTip="{loc:Tr rep.delete}"
                                                 Command="{Binding DataContext.RemoveCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"

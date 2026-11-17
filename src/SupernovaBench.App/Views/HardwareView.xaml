@@ -16,14 +16,14 @@
                     <ColumnDefinition Width="2*" MinWidth="160" />
                     <ColumnDefinition Width="3*" />
                 </Grid.ColumnDefinitions>
-                <TextBlock Style="{StaticResource Muted}" Margin="0,0,16,0" Text="{Binding Label}" />
+                <TextBlock Style="{StaticResource TextMuted}" Margin="0,0,16,0" Text="{Binding Label}" />
                 <TextBlock Grid.Column="1" Style="{StaticResource Body}" Text="{Binding Value}" />
             </Grid>
         </DataTemplate>
 
         <!-- Grupo: cartão com título e filhos (que podem ser grupos de novo) -->
         <DataTemplate x:Key="InfoGroupTemplate" DataType="{x:Type info:InfoNode}">
-            <Border Style="{StaticResource Card}" Margin="0,0,0,12" Padding="20,16">
+            <Border Style="{StaticResource CardPanel}" Margin="0,0,0,12" Padding="20,16">
                 <StackPanel>
                     <TextBlock Style="{StaticResource H2}">
                         <Run Text="{Binding Label, Mode=OneWay}" />
@@ -56,7 +56,7 @@
             </StackPanel>
             <StackPanel>
                 <TextBlock Style="{StaticResource H1}" Text="{loc:Tr hw.title}" />
-                <TextBlock Style="{StaticResource Muted}" Text="{loc:Tr hw.subtitle}" />
+                <TextBlock Style="{StaticResource TextMuted}" Text="{loc:Tr hw.subtitle}" />
             </StackPanel>
         </DockPanel>
 
@@ -70,7 +70,7 @@
             </ListBox.ItemTemplate>
         </ListBox>
 
-        <TextBlock DockPanel.Dock="Top" Style="{StaticResource Muted}" Margin="0,0,0,8" Text="{loc:Tr hw.loading}"
+        <TextBlock DockPanel.Dock="Top" Style="{StaticResource TextMuted}" Margin="0,0,0,8" Text="{loc:Tr hw.loading}"
                    Visibility="{Binding IsLoading, Converter={StaticResource BoolToVis}}" />
 
         <ScrollViewer VerticalScrollBarVisibility="Auto">

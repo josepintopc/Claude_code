@@ -39,6 +39,9 @@ jobs:
       - name: Testes (Windows / Direct3D no WARP)
         run: dotnet test tests/SupernovaBench.Windows.Tests -c Release --no-build -nologo --logger "console;verbosity=normal"
 
+      - name: Testes da interface (abre todas as páginas, nos dois temas e idiomas)
+        run: dotnet test tests/SupernovaBench.App.Tests -c Release --no-build -nologo --logger "console;verbosity=normal"
+
       - name: Benchmark de CPU pela linha de comando (fumaça)
         run: dotnet run --project src/SupernovaBench.Cli -c Release --no-build -- bench cpu --quick --lang pt-BR
 

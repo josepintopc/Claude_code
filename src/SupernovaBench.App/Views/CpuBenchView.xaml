@@ -8,7 +8,7 @@
         <c:BoolToVisibilityConverter x:Key="BoolToVis" />
         <c:EmptyToVisibilityConverter x:Key="EmptyToVis" />
 
-        <Style x:Key="StatLabel" TargetType="TextBlock" BasedOn="{StaticResource Muted}">
+        <Style x:Key="StatLabel" TargetType="TextBlock" BasedOn="{StaticResource TextMuted}">
             <Setter Property="FontSize" Value="12" />
         </Style>
         <Style x:Key="StatValue" TargetType="TextBlock" BasedOn="{StaticResource Mono}">
@@ -31,7 +31,7 @@
         <!-- cabeçalho -->
         <StackPanel Grid.ColumnSpan="3" Margin="0,4,0,14">
             <TextBlock Style="{StaticResource H1}" Text="{loc:Tr cpu.title}" />
-            <TextBlock Style="{StaticResource Muted}" Text="{loc:Tr cpu.subtitle}" />
+            <TextBlock Style="{StaticResource TextMuted}" Text="{loc:Tr cpu.subtitle}" />
         </StackPanel>
 
         <!-- ============================================================ imagem -->
@@ -40,7 +40,7 @@
                 <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <Border Style="{StaticResource Card}" Padding="10" Background="{DynamicResource Panel}">
+            <Border Style="{StaticResource CardPanel}" Padding="10" Background="{DynamicResource Panel}">
                 <Viewbox Stretch="Uniform">
                     <Grid Width="{Binding ImageWidth}" Height="{Binding ImageHeight}">
                         <Image Source="{Binding Bitmap}" RenderOptions.BitmapScalingMode="HighQuality" />
@@ -70,10 +70,10 @@
                                 Background="{DynamicResource Overlay}" BorderBrush="{DynamicResource Line}" BorderThickness="1"
                                 Visibility="{Binding HasScore, Converter={StaticResource BoolToVis}}">
                             <StackPanel>
-                                <TextBlock FontSize="22" Style="{StaticResource Muted}" Text="{loc:Tr cpu.score}" />
+                                <TextBlock FontSize="22" Style="{StaticResource TextMuted}" Text="{loc:Tr cpu.score}" />
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Style="{StaticResource BigNumber}" FontSize="72" Text="{Binding ScoreText}" />
-                                    <TextBlock Margin="12,0,0,12" VerticalAlignment="Bottom" FontSize="26" Style="{StaticResource Muted}"
+                                    <TextBlock Margin="12,0,0,12" VerticalAlignment="Bottom" FontSize="26" Style="{StaticResource TextMuted}"
                                                Text="{loc:Tr cpu.points}" />
                                 </StackPanel>
                                 <TextBlock FontSize="22" FontWeight="SemiBold" Foreground="{DynamicResource Good}" Text="{loc:Tr cpu.newBest}"
@@ -85,10 +85,10 @@
             </Border>
 
             <!-- progresso -->
-            <Border Grid.Row="1" Style="{StaticResource Card}" Margin="0,12,0,0" Padding="20,14">
+            <Border Grid.Row="1" Style="{StaticResource CardPanel}" Margin="0,12,0,0" Padding="20,14">
                 <StackPanel>
                     <DockPanel>
-                        <TextBlock DockPanel.Dock="Right" Style="{StaticResource Muted}" Text="{Binding ResolutionText}" />
+                        <TextBlock DockPanel.Dock="Right" Style="{StaticResource TextMuted}" Text="{Binding ResolutionText}" />
                         <TextBlock FontWeight="SemiBold" Text="{Binding StatusText}" />
                     </DockPanel>
                     <ProgressBar Margin="0,10,0,12" Maximum="100" Value="{Binding Progress, Mode=OneWay}" />
@@ -118,7 +118,7 @@
         <ScrollViewer Grid.Row="1" Grid.Column="2" VerticalScrollBarVisibility="Auto">
             <StackPanel>
                 <!-- modo e controles -->
-                <Border Style="{StaticResource Card}">
+                <Border Style="{StaticResource CardPanel}">
                     <StackPanel>
                         <TextBlock Style="{StaticResource Caption}" Text="{loc:Tr cpu.mode}" />
                         <WrapPanel Margin="0,8,0,0" IsEnabled="{Binding IsIdle}">
@@ -129,7 +129,7 @@
                             <RadioButton Style="{StaticResource Chip}" GroupName="cpumode" Content="{loc:Tr cpu.mode.sustained}"
                                          IsChecked="{Binding IsSustained, Mode=TwoWay}" />
                         </WrapPanel>
-                        <TextBlock Style="{StaticResource Muted}" Margin="0,4,0,0" Text="{Binding ModeDescription}" />
+                        <TextBlock Style="{StaticResource TextMuted}" Margin="0,4,0,0" Text="{Binding ModeDescription}" />
                         <TextBlock Style="{StaticResource Body}" Margin="0,10,0,0" FontWeight="SemiBold" Text="{Binding CpuName}" />
 
                         <Grid Margin="0,16,0,0">
@@ -148,12 +148,12 @@
                                 </StackPanel>
                             </Button>
                         </Grid>
-                        <TextBlock Style="{StaticResource Muted}" FontSize="12" Margin="0,10,0,0" Text="{loc:Tr cpu.tip}" />
+                        <TextBlock Style="{StaticResource TextMuted}" FontSize="12" Margin="0,10,0,0" Text="{loc:Tr cpu.tip}" />
                     </StackPanel>
                 </Border>
 
                 <!-- sensores durante o teste -->
-                <Border Style="{StaticResource Card}" Margin="0,12,0,0">
+                <Border Style="{StaticResource CardPanel}" Margin="0,12,0,0">
                     <StackPanel>
                         <TextBlock Style="{StaticResource Caption}" Text="{loc:Tr cpu.live}" />
                         <UniformGrid Columns="2" Margin="0,8,0,0">
@@ -178,10 +178,10 @@
                 </Border>
 
                 <!-- ranking -->
-                <Border Style="{StaticResource Card}" Margin="0,12,0,0">
+                <Border Style="{StaticResource CardPanel}" Margin="0,12,0,0">
                     <StackPanel>
                         <TextBlock Style="{StaticResource Caption}" Text="{loc:Tr cpu.ranking}" />
-                        <TextBlock Style="{StaticResource Muted}" Margin="0,8,0,0" Text="{loc:Tr cpu.ranking.empty}"
+                        <TextBlock Style="{StaticResource TextMuted}" Margin="0,8,0,0" Text="{loc:Tr cpu.ranking.empty}"
                                    Visibility="{Binding Ranking.Count, Converter={StaticResource EmptyToVis}, ConverterParameter=invert}" />
                         <ItemsControl Margin="0,4,0,0" ItemsSource="{Binding Ranking}">
                             <ItemsControl.ItemTemplate>
@@ -190,10 +190,10 @@
                                         <StackPanel>
                                             <DockPanel>
                                                 <TextBlock DockPanel.Dock="Right" Style="{StaticResource Mono}" FontWeight="Bold" Text="{Binding ScoreText}" />
-                                                <TextBlock Style="{StaticResource Muted}" Width="24" Text="{Binding Position}" />
+                                                <TextBlock Style="{StaticResource TextMuted}" Width="24" Text="{Binding Position}" />
                                                 <TextBlock Text="{Binding Label}" TextTrimming="CharacterEllipsis" FontWeight="SemiBold" />
                                             </DockPanel>
-                                            <TextBlock Margin="24,0,0,0" FontSize="11" Style="{StaticResource Muted}" Text="{Binding Detail}" />
+                                            <TextBlock Margin="24,0,0,0" FontSize="11" Style="{StaticResource TextMuted}" Text="{Binding Detail}" />
                                             <ProgressBar Margin="24,6,0,0" Height="6" Maximum="100" Value="{Binding Percent, Mode=OneWay}" />
                                         </StackPanel>
                                     </Border>

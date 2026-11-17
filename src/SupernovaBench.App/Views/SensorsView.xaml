@@ -12,10 +12,10 @@
         <!-- cabeçalho -->
         <DockPanel DockPanel.Dock="Top" Margin="0,4,0,14">
             <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
-                <TextBlock VerticalAlignment="Center" Margin="0,0,12,0" Style="{StaticResource Muted}" Text="{Binding CountText}" />
+                <TextBlock VerticalAlignment="Center" Margin="0,0,12,0" Style="{StaticResource TextMuted}" Text="{Binding CountText}" />
                 <Grid Width="280">
                     <TextBox Text="{Binding Filter, UpdateSourceTrigger=PropertyChanged}" />
-                    <TextBlock Margin="12,0,0,0" VerticalAlignment="Center" IsHitTestVisible="False" Style="{StaticResource Muted}"
+                    <TextBlock Margin="12,0,0,0" VerticalAlignment="Center" IsHitTestVisible="False" Style="{StaticResource TextMuted}"
                                Text="{loc:Tr sensors.search}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"
                                Visibility="{Binding Filter, Converter={StaticResource EmptyToVis}, ConverterParameter=invert}" />
                 </Grid>
@@ -28,7 +28,7 @@
             </StackPanel>
             <StackPanel>
                 <TextBlock Style="{StaticResource H1}" Text="{loc:Tr sensors.title}" />
-                <TextBlock Style="{StaticResource Muted}" Text="{loc:Tr sensors.subtitle}" />
+                <TextBlock Style="{StaticResource TextMuted}" Text="{loc:Tr sensors.subtitle}" />
             </StackPanel>
         </DockPanel>
 
@@ -47,15 +47,15 @@
                             Content="{loc:Tr sensors.installPawnio}" />
                     <Button Margin="8,0,0,0" Command="{Binding Sensors.OpenPawnIOSiteCommand}" Content="{loc:Tr sensors.pawnioSite}" />
                 </StackPanel>
-                <TextBlock Style="{StaticResource Muted}" Margin="0,8,0,0" Text="{Binding Sensors.InstallStatus}"
+                <TextBlock Style="{StaticResource TextMuted}" Margin="0,8,0,0" Text="{Binding Sensors.InstallStatus}"
                            Visibility="{Binding Sensors.InstallStatus, Converter={StaticResource EmptyToVis}}" />
             </StackPanel>
         </Border>
 
-        <TextBlock DockPanel.Dock="Top" Style="{StaticResource Muted}" Margin="0,0,0,8" Text="{Binding Sensors.StatusText}"
+        <TextBlock DockPanel.Dock="Top" Style="{StaticResource TextMuted}" Margin="0,0,0,8" Text="{Binding Sensors.StatusText}"
                    Visibility="{Binding Sensors.StatusText, Converter={StaticResource EmptyToVis}}" />
 
-        <Border Style="{StaticResource Card}" Padding="8">
+        <Border Style="{StaticResource CardPanel}" Padding="8">
             <DataGrid ItemsSource="{Binding View}">
                 <DataGrid.GroupStyle>
                     <GroupStyle>

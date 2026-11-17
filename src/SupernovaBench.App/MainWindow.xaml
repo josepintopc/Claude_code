@@ -102,7 +102,7 @@
                                         <TextBlock Style="{StaticResource Mono}" Foreground="{DynamicResource Muted}" Text="{Binding Sensors.GpuLoadText}" />
                                     </StackPanel>
                                 </Grid>
-                                <TextBlock Margin="0,8,0,0" FontSize="11" Style="{StaticResource Muted}" Text="{loc:Tr live.admin}"
+                                <TextBlock Margin="0,8,0,0" FontSize="11" Style="{StaticResource TextMuted}" Text="{loc:Tr live.admin}"
                                            Visibility="{Binding Sensors.IsElevated, Converter={StaticResource BoolToVis}, ConverterParameter=invert}" />
                             </StackPanel>
                         </Border>

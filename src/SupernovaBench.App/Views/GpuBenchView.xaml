@@ -8,7 +8,7 @@
         <c:BoolToVisibilityConverter x:Key="BoolToVis" />
         <c:EmptyToVisibilityConverter x:Key="EmptyToVis" />
 
-        <Style x:Key="StatLabel" TargetType="TextBlock" BasedOn="{StaticResource Muted}">
+        <Style x:Key="StatLabel" TargetType="TextBlock" BasedOn="{StaticResource TextMuted}">
             <Setter Property="FontSize" Value="12" />
         </Style>
         <Style x:Key="StatValue" TargetType="TextBlock" BasedOn="{StaticResource Mono}">
@@ -30,14 +30,14 @@
 
         <StackPanel Grid.ColumnSpan="3" Margin="0,4,0,14">
             <TextBlock Style="{StaticResource H1}" Text="{loc:Tr gpu.title}" />
-            <TextBlock Style="{StaticResource Muted}" Text="{loc:Tr gpu.subtitle}" />
+            <TextBlock Style="{StaticResource TextMuted}" Text="{loc:Tr gpu.subtitle}" />
         </StackPanel>
 
         <!-- ============================================================ coluna principal -->
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
             <StackPanel>
                 <!-- placa e configuração -->
-                <Border Style="{StaticResource Card}">
+                <Border Style="{StaticResource CardPanel}">
                     <StackPanel>
                         <StackPanel Orientation="Horizontal">
                             <Border Width="44" Height="44" CornerRadius="12" Background="{DynamicResource AccentGradient}">
@@ -47,7 +47,7 @@
                             <StackPanel Margin="14,0,0,0" VerticalAlignment="Center">
                                 <TextBlock Style="{StaticResource Caption}" Text="{loc:Tr gpu.adapter}" />
                                 <TextBlock Style="{StaticResource H2}" Text="{Binding AdapterName}" />
-                                <TextBlock Style="{StaticResource Muted}" Text="{Binding AdapterDetail}"
+                                <TextBlock Style="{StaticResource TextMuted}" Text="{Binding AdapterDetail}"
                                            Visibility="{Binding AdapterDetail, Converter={StaticResource EmptyToVis}}" />
                             </StackPanel>
                         </StackPanel>
@@ -74,7 +74,7 @@
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
 
-                        <TextBlock Style="{StaticResource Muted}" FontSize="12" Margin="0,4,0,0" Text="{loc:Tr gpu.window}" />
+                        <TextBlock Style="{StaticResource TextMuted}" FontSize="12" Margin="0,4,0,0" Text="{loc:Tr gpu.window}" />
 
                         <Grid Margin="0,16,0,0" HorizontalAlignment="Left" MinWidth="220">
                             <Button Style="{StaticResource PrimaryButton}" Command="{Binding StartCommand}"
@@ -96,7 +96,7 @@
                 </Border>
 
                 <!-- progresso -->
-                <Border Style="{StaticResource Card}" Margin="0,12,0,0" Padding="20,14">
+                <Border Style="{StaticResource CardPanel}" Margin="0,12,0,0" Padding="20,14">
                     <StackPanel>
                         <TextBlock FontWeight="SemiBold" Text="{Binding StatusText}" />
                         <ProgressBar Margin="0,10,0,12" Maximum="100" Value="{Binding Progress, Mode=OneWay}" />
@@ -124,10 +124,10 @@
                 <!-- pontuação -->
                 <Border Style="{StaticResource Hero}" Margin="0,12,0,0" Visibility="{Binding HasScore, Converter={StaticResource BoolToVis}}">
                     <StackPanel>
-                        <TextBlock Style="{StaticResource Muted}" FontSize="16" Text="{loc:Tr cpu.score}" />
+                        <TextBlock Style="{StaticResource TextMuted}" FontSize="16" Text="{loc:Tr cpu.score}" />
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Style="{StaticResource BigNumber}" FontSize="60" Text="{Binding ScoreText}" />
-                            <TextBlock Margin="10,0,0,10" VerticalAlignment="Bottom" FontSize="22" Style="{StaticResource Muted}" Text="{loc:Tr cpu.points}" />
+                            <TextBlock Margin="10,0,0,10" VerticalAlignment="Bottom" FontSize="22" Style="{StaticResource TextMuted}" Text="{loc:Tr cpu.points}" />
                         </StackPanel>
                         <TextBlock FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource Good}" Text="{loc:Tr cpu.newBest}"
                                    Visibility="{Binding IsNewBest, Converter={StaticResource BoolToVis}}" />
@@ -139,7 +139,7 @@
         <!-- ============================================================ painel lateral -->
         <ScrollViewer Grid.Row="1" Grid.Column="2" VerticalScrollBarVisibility="Auto">
             <StackPanel>
-                <Border Style="{StaticResource Card}">
+                <Border Style="{StaticResource CardPanel}">
                     <StackPanel>
                         <TextBlock Style="{StaticResource Caption}" Text="{loc:Tr gpu.live}" />
                         <UniformGrid Columns="2" Margin="0,8,0,0">
@@ -163,10 +163,10 @@
                     </StackPanel>
                 </Border>
 
-                <Border Style="{StaticResource Card}" Margin="0,12,0,0">
+                <Border Style="{StaticResource CardPanel}" Margin="0,12,0,0">
                     <StackPanel>
                         <TextBlock Style="{StaticResource Caption}" Text="{loc:Tr cpu.ranking}" />
-                        <TextBlock Style="{StaticResource Muted}" Margin="0,8,0,0" Text="{loc:Tr gpu.ranking.empty}"
+                        <TextBlock Style="{StaticResource TextMuted}" Margin="0,8,0,0" Text="{loc:Tr gpu.ranking.empty}"
                                    Visibility="{Binding Ranking.Count, Converter={StaticResource EmptyToVis}, ConverterParameter=invert}" />
                         <ItemsControl Margin="0,4,0,0" ItemsSource="{Binding Ranking}">
                             <ItemsControl.ItemTemplate>
@@ -175,10 +175,10 @@
                                         <StackPanel>
                                             <DockPanel>
                                                 <TextBlock DockPanel.Dock="Right" Style="{StaticResource Mono}" FontWeight="Bold" Text="{Binding ScoreText}" />
-                                                <TextBlock Style="{StaticResource Muted}" Width="24" Text="{Binding Position}" />
+                                                <TextBlock Style="{StaticResource TextMuted}" Width="24" Text="{Binding Position}" />
                                                 <TextBlock Text="{Binding Label}" TextTrimming="CharacterEllipsis" FontWeight="SemiBold" />
                                             </DockPanel>
-                                            <TextBlock Margin="24,0,0,0" FontSize="11" Style="{StaticResource Muted}" Text="{Binding Detail}" />
+                                            <TextBlock Margin="24,0,0,0" FontSize="11" Style="{StaticResource TextMuted}" Text="{Binding Detail}" />
                                             <ProgressBar Margin="24,6,0,0" Height="6" Maximum="100" Value="{Binding Percent, Mode=OneWay}" />
                                         </StackPanel>
                                     </Border>

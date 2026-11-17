@@ -8,7 +8,7 @@
         <c:BoolToVisibilityConverter x:Key="BoolToVis" />
         <c:EmptyToVisibilityConverter x:Key="EmptyToVis" />
 
-        <Style x:Key="StatLabel" TargetType="TextBlock" BasedOn="{StaticResource Muted}">
+        <Style x:Key="StatLabel" TargetType="TextBlock" BasedOn="{StaticResource TextMuted}">
             <Setter Property="FontSize" Value="12" />
         </Style>
         <Style x:Key="StatValue" TargetType="TextBlock" BasedOn="{StaticResource Mono}">
@@ -39,7 +39,7 @@
 
         <StackPanel Grid.ColumnSpan="3" Margin="0,4,0,12">
             <TextBlock Style="{StaticResource H1}" Text="{loc:Tr stress.title}" />
-            <TextBlock Style="{StaticResource Muted}" Text="{loc:Tr stress.subtitle}" />
+            <TextBlock Style="{StaticResource TextMuted}" Text="{loc:Tr stress.subtitle}" />
         </StackPanel>
 
         <Border Grid.Row="1" Grid.ColumnSpan="3" Style="{StaticResource Banner}" Margin="0,0,0,12">
@@ -52,7 +52,7 @@
         <!-- ============================================================ configuração e estado -->
         <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
             <StackPanel>
-                <Border Style="{StaticResource Card}">
+                <Border Style="{StaticResource CardPanel}">
                     <StackPanel>
                         <TextBlock Style="{StaticResource Caption}" Text="{loc:Tr gpu.adapter}" />
                         <TextBlock Style="{StaticResource H2}" Margin="0,4,0,0" Text="{Binding AdapterName}" />
@@ -94,7 +94,7 @@
                     </StackPanel>
                 </Border>
 
-                <Border Style="{StaticResource Card}" Margin="0,12,0,0" Padding="20,14">
+                <Border Style="{StaticResource CardPanel}" Margin="0,12,0,0" Padding="20,14">
                     <StackPanel>
                         <TextBlock FontWeight="SemiBold" Text="{Binding StatusText}" TextWrapping="Wrap" />
                         <UniformGrid Columns="3" Margin="0,12,0,0">
@@ -111,7 +111,7 @@
                                 <TextBlock Style="{StaticResource StatValue}" Foreground="{DynamicResource Accent1}" Text="{Binding MaxTempText}" />
                             </StackPanel>
                         </UniformGrid>
-                        <TextBlock Style="{StaticResource Muted}" Margin="0,12,0,0" Text="{Binding SummaryText}"
+                        <TextBlock Style="{StaticResource TextMuted}" Margin="0,12,0,0" Text="{Binding SummaryText}"
                                    Visibility="{Binding SummaryText, Converter={StaticResource EmptyToVis}}" />
                     </StackPanel>
                 </Border>
@@ -119,7 +119,7 @@
         </ScrollViewer>
 
         <!-- ============================================================ leituras ao vivo -->
-        <Border Grid.Row="2" Grid.Column="2" Style="{StaticResource Card}" VerticalAlignment="Top">
+        <Border Grid.Row="2" Grid.Column="2" Style="{StaticResource CardPanel}" VerticalAlignment="Top">
             <StackPanel>
                 <TextBlock Style="{StaticResource Caption}" Text="{loc:Tr gpu.live}" />
                 <TextBlock Margin="0,10,0,0" Style="{StaticResource StatLabel}" Text="{loc:Tr gpu.temp}" />
