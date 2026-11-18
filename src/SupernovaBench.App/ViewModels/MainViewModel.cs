@@ -55,7 +55,7 @@ public sealed partial class MainViewModel : LocalizedViewModel
             }),
             new NavGroup("nav.section.tools", new[]
             {
-                I("drivers", "nav.tools.drivers", GDrivers, 5),
+                I("drivers", "nav.tools.drivers", GDrivers),
                 I("reports", "nav.tools.reports", GReports),
                 I("settings", "nav.tools.settings", GSettings),
             }),
@@ -111,6 +111,7 @@ public sealed partial class MainViewModel : LocalizedViewModel
             "stress.ram" => RamStress,
             "health.disk" => new DiskHealthViewModel(),
             "games" => Games,
+            "drivers" => Drivers,
             "reports" => new ReportsViewModel(),
             "settings" => new SettingsViewModel(this),
             _ => new ComingSoonViewModel(item, _items.Values.Where(i => i.IsSoon).ToList()),
@@ -129,6 +130,9 @@ public sealed partial class MainViewModel : LocalizedViewModel
     public GpuStressViewModel GpuStress => _gpuStress ??= new GpuStressViewModel();
     private GpuStressViewModel? _gpuStress;
 
+    public DriversViewModel Drivers => _drivers ??= new DriversViewModel();
+    private DriversViewModel? _drivers;
+
     public GamesViewModel Games => _games ??= new GamesViewModel();
     private GamesViewModel? _games;
 
@@ -146,7 +150,8 @@ public sealed partial class MainViewModel : LocalizedViewModel
 
     public bool IsBenchmarkRunning => _cpuBench?.IsRunning == true || _gpuBench?.IsRunning == true || _gpuStress?.IsRunning == true
                                       || _memoryBench?.IsRunning == true || _diskBench?.IsRunning == true
-                                      || _cpuStress?.IsRunning == true || _ramStress?.IsRunning == true;
+                                      || _cpuStress?.IsRunning == true || _ramStress?.IsRunning == true
+                                      || _drivers?.IsBusy == true;
 
     public void StopBenchmarks()
     {
@@ -157,6 +162,7 @@ public sealed partial class MainViewModel : LocalizedViewModel
         _diskBench?.StopNow();
         _cpuStress?.StopNow();
         _ramStress?.StopNow();
+        _drivers?.StopNow();
     }
 
     [RelayCommand]

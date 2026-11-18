@@ -6,7 +6,7 @@ Supernova Bench é um app para Windows 10/11 que junta, num só programa, o que 
 informações de hardware no estilo **CPU-Z / GPU-Z / AIDA64**, benchmark de CPU no estilo **Cinebench**,
 benchmark de GPU com cena 3D, stress de GPU no estilo **FurMark**, sensores em tempo real, benchmark de memória e cache no estilo
 **AIDA64**, benchmark de disco no estilo **CrystalDiskMark**, saúde SMART no estilo **CrystalDiskInfo**, stress de CPU, teste de RAM,
-**biblioteca de jogos** de todos os launchers e, na próxima fase, **atualizador de drivers**. Interface em **português (padrão) e inglês**, tema **escuro cósmico** ou claro.
+**biblioteca de jogos** de todos os launchers e **atualizador de drivers**. Interface em **português (padrão) e inglês**, tema **escuro cósmico** ou claro.
 
 > Projeto inspirado no [ResetExplode](https://github.com/GustavoReset/ResetExplode) (MIT), de Gustavo (GustavoReset).
 > O motor de benchmark de CPU, a coleta via WMI e o monitor de sensores foram portados e adaptados de lá — veja
@@ -54,11 +54,21 @@ benchmark de GPU com cena 3D, stress de GPU no estilo **FurMark**, sensores em t
 
 A Visão geral mostra os jogos jogados recentemente.
 
+## Fase 5 — Drivers
+
+| Módulo | O que faz |
+|---|---|
+| **Placa de vídeo** | Driver instalado (versão no formato do fabricante: NVIDIA 566.36, AMD Adrenalin) e, para **NVIDIA**, o mais recente pela consulta pública do site da NVIDIA (Game Ready ou Studio), com **Baixar e instalar** (barra de progresso, retoma download interrompido) e notas da versão. AMD e Intel não têm consulta pública: botão para a ferramenta oficial. |
+| **Windows Update** | Lista os drivers que a Microsoft oferece para o PC (chipset, rede, áudio, Bluetooth...) e instala os escolhidos, avisando se precisar reiniciar. |
+| **Ponto de restauração** | Criado automaticamente antes de qualquer instalação (avisa se a Proteção do Sistema estiver desligada ou se o Windows recusar por já haver um nas últimas 24 h). Lista os últimos e abre a Restauração do Sistema. |
+| **Dispositivos com problema** | Tudo que aparece com ⚠ no Gerenciador de Dispositivos, com o significado do código (driver não instalado, não inicia, desativado...). |
+| **Todos os drivers** | Inventário com busca e filtro por categoria: dispositivo, fornecedor, versão, data e assinatura digital. |
+| **Backup** | Copia todos os drivers de terceiros para uma pasta (`pnputil /export-driver`), para reinstalar depois de formatar. |
+
 ### Próximas fases
 
 | Fase | Conteúdo |
 |---|---|
-| 5 — Drivers | Inventário de drivers, busca de atualizações (Windows Update, NVIDIA, AMD, Intel) e ponto de restauração antes de instalar. |
 | 6 — Extras | Overlay de FPS, detector de gargalo e comparação online. |
 
 ---
@@ -107,6 +117,9 @@ supernova-cli stress cpu [--mode fma|render|int] [--threads N] [--seconds N]
 supernova-cli stress ram [--mb N | --percent P] [--seconds N]
 supernova-cli disk health
 supernova-cli games list [--json]
+supernova-cli drivers list [--problems]
+supernova-cli drivers check            (só consulta; a linha de comando nunca instala drivers)
+supernova-cli drivers restore-points
 supernova-cli gpu info
 supernova-cli info
 ```
@@ -117,7 +130,8 @@ supernova-cli info
 src/
   SupernovaBench.Core/      motores de benchmark (CPU, memória, disco), stress de CPU/RAM, leitura de SMART, pontuação,
                             histórico, relatórios, traduções (multiplataforma)
-  SupernovaBench.Hardware/  WMI, registro, LibreHardwareMonitor e saúde dos discos (SMART/NVMe) (Windows)
+  SupernovaBench.Hardware/  WMI, registro, LibreHardwareMonitor, saúde dos discos (SMART/NVMe) e drivers
+                            (Windows Update, NVIDIA, ponto de restauração, backup) (Windows)
   SupernovaBench.Graphics/  Direct3D 11 (Vortice): stress de GPU, cena 3D, DXGI, NVML e dados estilo GPU-Z (Windows)
   SupernovaBench.Games/     launchers de jogos (registro e arquivos), processos, plano de energia e GPU preferida (Windows)
   SupernovaBench.App/       interface WPF (MVVM): Views, ViewModels, Themes, Localization
@@ -142,5 +156,6 @@ GPU benchmark (average FPS and 1% low), a FurMark-style GPU stress test with a t
 details (NVML/DXGI), an AIDA64-style cache and memory benchmark, a CrystalDiskMark-style disk benchmark,
 CrystalDiskInfo-style SMART health (NVMe and SATA), a CPU stress test with calculation-error detection, an in-Windows
 RAM stability test, a game library for Steam, Epic, GOG, Ubisoft, EA, Battle.net and Xbox (covers, playtime tracking and
-per-game performance profiles), HTML/JSON reports and cross-PC comparison. The next phase adds a driver updater. The UI is available in Portuguese (default) and English, with a cosmic dark theme or a light theme.
+per-game performance profiles), a driver updater (NVIDIA latest-driver check and install, Windows Update drivers,
+restore point before installing, problem devices, driver inventory and backup), HTML/JSON reports and cross-PC comparison. The UI is available in Portuguese (default) and English, with a cosmic dark theme or a light theme.
 Download the latest build from **Actions → Build → Artifacts**. Licensed under MIT; see [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).

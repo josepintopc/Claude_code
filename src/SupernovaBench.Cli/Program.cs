@@ -156,6 +156,18 @@ if (argList.Count >= 2 && argList[0] == "games" && argList[1] == "list")
     return GamesCommands.List(Flag("--json"));
 }
 
+if (argList.Count >= 2 && argList[0] == "drivers")
+{
+    if (!OperatingSystem.IsWindows()) { Console.Error.WriteLine(Loc.T("cli.gpu.notWindows")); return 3; }
+    return argList[1] switch
+    {
+        "list" => DriversCommands.List(Flag("--problems")),
+        "check" => await DriversCommands.Check(),
+        "restore-points" => DriversCommands.RestorePointsList(),
+        _ => 1,
+    };
+}
+
 Console.Error.WriteLine(Loc.T("cli.unknown"));
 Console.WriteLine(Loc.T("cli.usage"));
 return 1;
