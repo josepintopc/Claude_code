@@ -43,6 +43,7 @@ public partial class App : Application
 
         AppServices.Sensors.Start();
         AppServices.Games.Start();
+        AppServices.Overlay.StartIfEnabled();
     }
 
     protected override void OnExit(ExitEventArgs e)

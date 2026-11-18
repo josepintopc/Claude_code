@@ -16,6 +16,7 @@ public static class AppServices
     public static GpuService Gpu { get; } = new();
     public static GameService Games { get; private set; } = null!;
     public static CoverService Covers { get; } = new();
+    public static OverlayService Overlay { get; private set; } = null!;
     public static MainViewModel? Main { get; set; }
 
     /// <summary>Só lê as preferências e aplica o idioma (usado quando o app já está aberto).</summary>
@@ -36,6 +37,7 @@ public static class AppServices
         History = new ResultHistory();
         Sensors = new SensorService { IntervalMs = Settings.SensorIntervalMs };
         Games = new GameService();
+        Overlay = new OverlayService();
     }
 
     public static void TrySaveSettings()
@@ -46,6 +48,7 @@ public static class AppServices
 
     public static void Shutdown()
     {
+        Overlay?.Shutdown();
         Games?.Shutdown();
         Sensors?.Dispose();
     }

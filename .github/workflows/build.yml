@@ -7,6 +7,8 @@ on:
   push:
     branches: ['**']
     tags: ['v*']
+    # Resultados da comunidade (commits da automação) não precisam recompilar o app.
+    paths-ignore: ['community/**']
   pull_request:
   workflow_dispatch:
 
@@ -39,6 +41,9 @@ jobs:
       - name: Testes (Windows / Direct3D no WARP)
         run: dotnet test tests/SupernovaBench.Windows.Tests -c Release --no-build -nologo --logger "console;verbosity=normal"
 
+      - name: Testes da automação da comparação online (Python)
+        run: python .github/scripts/test_accept_result.py
+
       - name: Testes da interface (abre todas as páginas, nos dois temas e idiomas)
         run: dotnet test tests/SupernovaBench.App.Tests -c Release --no-build -nologo --logger "console;verbosity=normal"
 
@@ -62,6 +67,7 @@ jobs:
           & $cli games list --lang pt-BR; if ($LASTEXITCODE) { exit $LASTEXITCODE }
           & $cli drivers list --problems --lang pt-BR; if ($LASTEXITCODE) { exit $LASTEXITCODE }
           & $cli drivers restore-points --lang pt-BR; if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          & $cli fps --seconds 2 --lang pt-BR; if ($LASTEXITCODE) { exit $LASTEXITCODE }
 
       - name: Publicar SupernovaBench.exe
         run: >

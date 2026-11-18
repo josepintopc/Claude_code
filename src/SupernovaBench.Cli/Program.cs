@@ -156,6 +156,13 @@ if (argList.Count >= 2 && argList[0] == "games" && argList[1] == "list")
     return GamesCommands.List(Flag("--json"));
 }
 
+if (argList.Count >= 1 && argList[0] == "fps")
+{
+    if (!OperatingSystem.IsWindows()) { Console.Error.WriteLine(Loc.T("cli.gpu.notWindows")); return 3; }
+    int fpsSeconds = int.TryParse(Opt("--seconds"), out var fs) && fs > 0 ? fs : 10;
+    return GamesCommands.Fps(fpsSeconds);
+}
+
 if (argList.Count >= 2 && argList[0] == "drivers")
 {
     if (!OperatingSystem.IsWindows()) { Console.Error.WriteLine(Loc.T("cli.gpu.notWindows")); return 3; }

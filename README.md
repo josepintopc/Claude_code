@@ -6,7 +6,7 @@ Supernova Bench é um app para Windows 10/11 que junta, num só programa, o que 
 informações de hardware no estilo **CPU-Z / GPU-Z / AIDA64**, benchmark de CPU no estilo **Cinebench**,
 benchmark de GPU com cena 3D, stress de GPU no estilo **FurMark**, sensores em tempo real, benchmark de memória e cache no estilo
 **AIDA64**, benchmark de disco no estilo **CrystalDiskMark**, saúde SMART no estilo **CrystalDiskInfo**, stress de CPU, teste de RAM,
-**biblioteca de jogos** de todos os launchers e **atualizador de drivers**. Interface em **português (padrão) e inglês**, tema **escuro cósmico** ou claro.
+**biblioteca de jogos** de todos os launchers, **atualizador de drivers**, **overlay de FPS com detector de gargalo** e **comparação online**. Interface em **português (padrão) e inglês**, tema **escuro cósmico** ou claro.
 
 > Projeto inspirado no [ResetExplode](https://github.com/GustavoReset/ResetExplode) (MIT), de Gustavo (GustavoReset).
 > O motor de benchmark de CPU, a coleta via WMI e o monitor de sensores foram portados e adaptados de lá — veja
@@ -65,10 +65,16 @@ A Visão geral mostra os jogos jogados recentemente.
 | **Todos os drivers** | Inventário com busca e filtro por categoria: dispositivo, fornecedor, versão, data e assinatura digital. |
 | **Backup** | Copia todos os drivers de terceiros para uma pasta (`pnputil /export-driver`), para reinstalar depois de formatar. |
 
-### Próximas fases
+## Fase 6 — Extras
 
-| Fase | Conteúdo |
+| Módulo | O que faz |
 |---|---|
+| **Monitor de jogo** | FPS e tempo de quadro de qualquer jogo DirectX 9–12, lidos dos eventos de "present" que o próprio Windows publica (ETW, mesma técnica do PresentMon) — nada é injetado no jogo, então não mexe com anti-cheat. **Gravar sessão** dá o FPS médio, o 1% low e o resumo do gargalo. |
+| **Detector de gargalo** | A cada segundo cruza carga da GPU, da CPU (total e do núcleo mais ocupado), VRAM, RAM e FPS e diz o que limita: GPU, CPU, um núcleo da CPU, VRAM, RAM, FPS travado (V-Sync/limitador) ou equilibrado — com a dica do que fazer. |
+| **Overlay** | Janela transparente por cima do jogo (não recebe cliques nem foco) com FPS, tempo de quadro, CPU, GPU e gargalo. **Ctrl+Shift+O** liga/desliga. Posição e opacidade ajustáveis. Funciona em janela e tela cheia sem bordas. |
+| **Comparação online** | Ranking dos seus resultados contra os enviados pela comunidade (mesmo teste, preset e versão do motor), com posição e percentil. **Enviar meu resultado** abre uma issue já preenchida no GitHub; a automação [`community-results.yml`](.github/workflows/community-results.yml) valida só os campos públicos, grava em [`community/results.json`](community/results.json) e responde na issue. Requer o repositório **público**. |
+
+---|---|
 | 6 — Extras | Overlay de FPS, detector de gargalo e comparação online. |
 
 ---
@@ -120,6 +126,7 @@ supernova-cli games list [--json]
 supernova-cli drivers list [--problems]
 supernova-cli drivers check            (só consulta; a linha de comando nunca instala drivers)
 supernova-cli drivers restore-points
+supernova-cli fps [--seconds N]           (FPS dos jogos abertos, como administrador)
 supernova-cli gpu info
 supernova-cli info
 ```
@@ -133,7 +140,8 @@ src/
   SupernovaBench.Hardware/  WMI, registro, LibreHardwareMonitor, saúde dos discos (SMART/NVMe) e drivers
                             (Windows Update, NVIDIA, ponto de restauração, backup) (Windows)
   SupernovaBench.Graphics/  Direct3D 11 (Vortice): stress de GPU, cena 3D, DXGI, NVML e dados estilo GPU-Z (Windows)
-  SupernovaBench.Games/     launchers de jogos (registro e arquivos), processos, plano de energia e GPU preferida (Windows)
+  SupernovaBench.Games/     launchers de jogos (registro e arquivos), processos, plano de energia, GPU preferida e FPS por ETW (Windows)
+community/                  resultados da comparação online (preenchido pela automação do GitHub)
   SupernovaBench.App/       interface WPF (MVVM): Views, ViewModels, Themes, Localization
   SupernovaBench.Cli/       benchmarks pela linha de comando
 tests/SupernovaBench.Core.Tests/     testes do núcleo (rodam em qualquer sistema)
@@ -157,5 +165,6 @@ details (NVML/DXGI), an AIDA64-style cache and memory benchmark, a CrystalDiskMa
 CrystalDiskInfo-style SMART health (NVMe and SATA), a CPU stress test with calculation-error detection, an in-Windows
 RAM stability test, a game library for Steam, Epic, GOG, Ubisoft, EA, Battle.net and Xbox (covers, playtime tracking and
 per-game performance profiles), a driver updater (NVIDIA latest-driver check and install, Windows Update drivers,
-restore point before installing, problem devices, driver inventory and backup), HTML/JSON reports and cross-PC comparison. The UI is available in Portuguese (default) and English, with a cosmic dark theme or a light theme.
+restore point before installing, problem devices, driver inventory and backup), an ETW-based FPS monitor with an in-game
+overlay and bottleneck detector, HTML/JSON reports and an online comparison backed by a public GitHub file. The UI is available in Portuguese (default) and English, with a cosmic dark theme or a light theme.
 Download the latest build from **Actions → Build → Artifacts**. Licensed under MIT; see [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).

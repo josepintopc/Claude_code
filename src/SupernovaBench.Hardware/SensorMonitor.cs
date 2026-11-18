@@ -137,6 +137,17 @@ public sealed class SensorMonitor : IDisposable
 
     public float? CpuPower => Of(HardwareType.Cpu, SensorType.Power).FirstOrDefault(r => r.Name.Contains("Package"))?.RawValue;
 
+    /// <summary>Carga do núcleo (ou thread) mais ocupado: revela jogos presos em uma thread só.</summary>
+    public float? CpuMaxCoreLoad
+    {
+        get
+        {
+            var cores = Of(HardwareType.Cpu, SensorType.Load).Where(r => r.Name.StartsWith("CPU Core #", StringComparison.Ordinal))
+                                                             .Select(r => r.RawValue!.Value).ToList();
+            return cores.Count > 0 ? cores.Max() : null;
+        }
+    }
+
     /// <summary>Média dos clocks dos núcleos (MHz).</summary>
     public float? CpuClock
     {
@@ -176,6 +187,19 @@ public sealed class SensorMonitor : IDisposable
             if (MainGpu is not { } gpu) return null;
             var loads = Of(gpu, SensorType.Load).ToList();
             return (loads.FirstOrDefault(r => r.Name == "GPU Core") ?? loads.FirstOrDefault(r => r.Name == "D3D 3D"))?.RawValue;
+        }
+    }
+
+    /// <summary>Uso da memória de vídeo (%): sensor de carga "GPU Memory" ou usada ÷ total.</summary>
+    public float? GpuMemoryLoad
+    {
+        get
+        {
+            if (MainGpu is not { } gpu) return null;
+            if (Of(gpu, SensorType.Load).FirstOrDefault(r => r.Name == "GPU Memory") is { } load) return load.RawValue;
+            var used = Of(gpu, SensorType.SmallData).FirstOrDefault(r => r.Name == "GPU Memory Used")?.RawValue;
+            var total = Of(gpu, SensorType.SmallData).FirstOrDefault(r => r.Name == "GPU Memory Total")?.RawValue;
+            return used is { } u && total is > 0 ? 100 * u / total : null;
         }
     }
 

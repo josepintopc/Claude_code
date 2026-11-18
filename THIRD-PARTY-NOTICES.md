@@ -64,6 +64,13 @@ https://pawnio.eu
 
 ---
 
+## Microsoft.Diagnostics.Tracing.TraceEvent
+
+Usado para ler os eventos de "present" do DirectX (ETW) e medir o FPS dos jogos.
+Copyright (c) Microsoft Corporation. Licenciado sob a licença MIT — https://github.com/microsoft/perfview/blob/main/LICENSE.TXT
+
+---
+
 ## Capas de jogos / Game covers
 
 O Supernova Bench não traz nenhuma capa embutida. As capas mostradas na Biblioteca são baixadas, no PC do usuário, do CDN

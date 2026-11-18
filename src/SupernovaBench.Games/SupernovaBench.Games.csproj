@@ -9,4 +9,9 @@
     <ProjectReference Include="..\SupernovaBench.Core\SupernovaBench.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- Leitura de eventos do Windows (ETW) para o FPS dos jogos, como o PresentMon. MIT, Microsoft. -->
+    <PackageReference Include="Microsoft.Diagnostics.Tracing.TraceEvent" Version="3.1.19" />
+  </ItemGroup>
+
 </Project>

@@ -4,6 +4,7 @@ using SupernovaBench.Core.Games;
 using SupernovaBench.Core.Localization;
 using SupernovaBench.Core.Storage;
 using SupernovaBench.Games;
+using SupernovaBench.Core.Extras;
 
 namespace SupernovaBench.Cli;
 
@@ -40,6 +41,27 @@ internal static class GamesCommands
             foreach (var g in manualGames) Console.WriteLine($"  - {g.Name}  [{g.Executable}]");
         }
         if (r.Games.Count == 0) Console.WriteLine(Loc.T("games.cli.none"));
+        return 0;
+    }
+
+    /// <summary>"fps": FPS dos processos que estão entregando quadros (DirectX), uma linha por segundo.</summary>
+    public static int Fps(int seconds)
+    {
+        using var monitor = new FrameRateMonitor();
+        if (!monitor.Start())
+        {
+            Console.Error.WriteLine(monitor.Error == "admin" ? Loc.T("monitor.error.admin") : Loc.T("monitor.error.etw", monitor.Error ?? "?"));
+            return 6;
+        }
+        for (int i = 0; i < seconds; i++)
+        {
+            Thread.Sleep(1000);
+            double now = monitor.NowMs;
+            if (monitor.Counter.Busiest(now) is { } pid && monitor.Counter.Snapshot(pid, now) is { } s)
+                Console.WriteLine($"{ForegroundWindow.ProcessName(pid) ?? pid.ToString()}: {s.Fps:0} FPS · {s.FrameTimeMs:0.0} ms");
+            else
+                Console.WriteLine(Loc.T("monitor.waiting"));
+        }
         return 0;
     }
 }

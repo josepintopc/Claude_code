@@ -13,7 +13,7 @@ public sealed partial class MainViewModel : LocalizedViewModel
                          GMemory = "", GDisk = "", GStress = "", GGames = "", GDrivers = "",
                          GReports = "", GSettings = "";
 
-    private const string GHealth = "\uE95E";
+    private const string GHealth = "\uE95E", GMonitor = "\uE9D9", GCommunity = "\uE774";
 
     private readonly Dictionary<string, object> _pages = new();
     private readonly Dictionary<string, NavItem> _items = new();
@@ -53,6 +53,11 @@ public sealed partial class MainViewModel : LocalizedViewModel
             {
                 I("games", "nav.games.library", GGames),
             }),
+            new NavGroup("nav.section.extras", new[]
+            {
+                I("monitor", "nav.extras.monitor", GMonitor),
+                I("community", "nav.extras.community", GCommunity),
+            }),
             new NavGroup("nav.section.tools", new[]
             {
                 I("drivers", "nav.tools.drivers", GDrivers),
@@ -91,7 +96,13 @@ public sealed partial class MainViewModel : LocalizedViewModel
         foreach (var other in _items.Values)
             if (!ReferenceEquals(other, item) && other.IsSelected) other.IsSelected = false;
         CurrentItem = item;
-        CurrentPage = GetPage(item);
+        var page = GetPage(item);
+        if (!ReferenceEquals(page, CurrentPage))
+        {
+            (CurrentPage as IPageLifecycle)?.Deactivated();
+            CurrentPage = page;
+            (page as IPageLifecycle)?.Activated();
+        }
     }
 
     private object GetPage(NavItem item)
@@ -112,6 +123,8 @@ public sealed partial class MainViewModel : LocalizedViewModel
             "health.disk" => new DiskHealthViewModel(),
             "games" => Games,
             "drivers" => Drivers,
+            "monitor" => new GameMonitorViewModel(),
+            "community" => new CommunityViewModel(),
             "reports" => new ReportsViewModel(),
             "settings" => new SettingsViewModel(this),
             _ => new ComingSoonViewModel(item, _items.Values.Where(i => i.IsSoon).ToList()),
@@ -151,7 +164,7 @@ public sealed partial class MainViewModel : LocalizedViewModel
     public bool IsBenchmarkRunning => _cpuBench?.IsRunning == true || _gpuBench?.IsRunning == true || _gpuStress?.IsRunning == true
                                       || _memoryBench?.IsRunning == true || _diskBench?.IsRunning == true
                                       || _cpuStress?.IsRunning == true || _ramStress?.IsRunning == true
-                                      || _drivers?.IsBusy == true;
+                                      || _drivers?.IsBusy == true || AppServices.Overlay?.IsRecording == true;
 
     public void StopBenchmarks()
     {

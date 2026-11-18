@@ -1,0 +1,54 @@
+name: Resultados da comunidade
+
+# Comparação online do Supernova Bench: o app abre uma issue "[resultado] ..." com um bloco JSON.
+# Esta automação valida o bloco (só campos públicos), adiciona em community/results.json e responde na issue.
+# O corpo da issue entra só por variável de ambiente (nunca interpolado em comandos).
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: community-results
+  cancel-in-progress: false
+
+jobs:
+  accept:
+    if: startsWith(github.event.issue.title, '[resultado]')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+
+      - name: Validar e adicionar o resultado
+        id: accept
+        env:
+          ISSUE_BODY: ${{ github.event.issue.body }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+        run: python3 -I .github/scripts/accept_result.py community/results.json
+
+      - name: Gravar no repositório
+        if: steps.accept.outputs.status == 'accepted'
+        env:
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add community/results.json
+          git commit -m "Comunidade: resultado da issue #${ISSUE_NUMBER}"
+          for i in 1 2 3; do git pull --rebase && git push && break; sleep 5; done
+
+      - name: Responder e fechar a issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          MESSAGE: ${{ steps.accept.outputs.message }}
+          STATUS: ${{ steps.accept.outputs.status }}
+        run: |
+          gh issue comment "$ISSUE_NUMBER" --repo "$GITHUB_REPOSITORY" --body "$MESSAGE"
+          if [ "$STATUS" = "rejected" ]; then reason="not planned"; else reason="completed"; fi
+          gh issue close "$ISSUE_NUMBER" --repo "$GITHUB_REPOSITORY" --reason "$reason"
