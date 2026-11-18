@@ -178,12 +178,19 @@ public sealed unsafe class MemoryBench
         }
     }
 
+    /// <summary>
+    /// Uma medida: todas as threads começam juntas (barreira), cada uma repete passadas pelo próprio buffer até completar
+    /// o tempo e anota quando começou e terminou. Banda = bytes de todas ÷ (último fim − primeiro início).
+    /// O cronômetro fica nas próprias threads: se o Windows atrasar outra thread, a medida não é afetada.
+    /// </summary>
     private double BandwidthOnce(MemOp op, byte*[] buffers, long size, bool nonTemporal, CancellationToken ct)
     {
         int n = buffers.Length;
         var bytes = new long[n];
-        int stop = 0;
-        using var start = new Barrier(n + 1);
+        var starts = new long[n];
+        var ends = new long[n];
+        long durationTicks = (long)(_seconds * Stopwatch.Frequency);
+        using var start = new Barrier(n);
         var threads = new Thread[n];
         for (int t = 0; t < n; t++)
         {
@@ -193,7 +200,8 @@ public sealed unsafe class MemoryBench
                 byte* p = buffers[ti];
                 long done = 0, sink = 0;
                 start.SignalAndWait();
-                while (Volatile.Read(ref stop) == 0)
+                long t0 = Stopwatch.GetTimestamp(), now = t0;
+                while (now - t0 < durationTicks && !ct.IsCancellationRequested)
                 {
                     switch (op)
                     {
@@ -212,22 +220,21 @@ public sealed unsafe class MemoryBench
                             done += half;
                             break;
                     }
+                    now = Stopwatch.GetTimestamp();
                 }
+                if (nonTemporal && Sse.IsSupported) Sse.StoreFence();
+                starts[ti] = t0;
+                ends[ti] = Stopwatch.GetTimestamp();
                 bytes[ti] = done;
                 Interlocked.Add(ref _sink, sink);
             })
-            { IsBackground = true, Name = $"Supernova Mem {ti}", Priority = ThreadPriority.AboveNormal };
+            { IsBackground = true, Name = $"Supernova Mem {ti}" };
             threads[t].Start();
         }
 
-        start.SignalAndWait();
-        var sw = Stopwatch.StartNew();
-        ct.WaitHandle.WaitOne(TimeSpan.FromSeconds(_seconds));
-        Volatile.Write(ref stop, 1);
         foreach (var th in threads) th.Join();
-        sw.Stop();
-        if (nonTemporal && Sse.IsSupported) Sse.StoreFence();
-        return bytes.Sum() / sw.Elapsed.TotalSeconds / 1e9;
+        double seconds = (ends.Max() - starts.Min()) / (double)Stopwatch.Frequency;
+        return seconds > 0 ? bytes.Sum() / seconds / 1e9 : 0;
     }
 
     private static long ReadPass(byte* p, long size)

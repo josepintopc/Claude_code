@@ -27,6 +27,9 @@ public class MemoryBenchTests
         // A latência do L1 é muito menor que a da RAM.
         Assert.True(r!.Get(MemLevel.L1, MemOp.Latency) < r.Get(MemLevel.Memory, MemOp.Latency));
         Assert.True(r.Score > 0);
+        // O modo rápido tem 16 medidas curtas: se o tempo explodir, alguma thread ficou sem CPU (bug visto no Windows).
+        Assert.True(r.Seconds < 30, $"levou {r.Seconds:0.0} s");
+        Assert.True(r.Get(MemLevel.Memory, MemOp.Copy) < 2000, "banda de cópia irreal");
 
         var result = bench.ToResult(r, "16 GB DDR4");
         Assert.Equal(TestIds.MemoryBench, result.Test);
