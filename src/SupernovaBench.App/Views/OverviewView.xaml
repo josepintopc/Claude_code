@@ -148,6 +148,56 @@
                 </Border>
             </Grid>
 
+            <!-- ======================================================== jogado recentemente -->
+            <Border Style="{StaticResource CardPanel}" Margin="0,12,0,0" Visibility="{Binding HasRecentGames, Converter={StaticResource BoolToVis}}">
+                <StackPanel>
+                    <DockPanel>
+                        <Button DockPanel.Dock="Right" Style="{StaticResource GhostButton}" Content="{loc:Tr ov.openLibrary}"
+                                Command="{Binding OpenCommand}" CommandParameter="games" />
+                        <TextBlock Style="{StaticResource H2}" VerticalAlignment="Center" Text="{loc:Tr ov.recentGames}" />
+                    </DockPanel>
+                    <ItemsControl Margin="0,12,0,0" ItemsSource="{Binding RecentGames}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate><StackPanel Orientation="Horizontal" /></ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="{x:Type vm:GameCard}">
+                                <StackPanel Width="110" Margin="0,0,16,0" Cursor="Hand" Background="Transparent">
+                                    <StackPanel.InputBindings>
+                                        <MouseBinding Gesture="LeftClick" CommandParameter="{Binding}"
+                                                      Command="{Binding DataContext.OpenGameCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" />
+                                    </StackPanel.InputBindings>
+                                    <Border Width="110" Height="165" CornerRadius="10" Background="{DynamicResource HeroGradient}">
+                                        <Grid>
+                                            <TextBlock x:Name="Initials" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="30"
+                                                       FontWeight="Bold" Opacity="0.85" Text="{Binding Initials}" />
+                                            <Border x:Name="Fill" CornerRadius="10" Visibility="Collapsed">
+                                                <Border.Background>
+                                                    <ImageBrush ImageSource="{Binding Cover}" Stretch="UniformToFill" />
+                                                </Border.Background>
+                                            </Border>
+                                            <Image x:Name="Icon" Width="56" Height="56" Source="{Binding Cover}" Visibility="Collapsed" />
+                                        </Grid>
+                                    </Border>
+                                    <TextBlock Margin="0,6,0,0" FontWeight="SemiBold" FontSize="12" TextTrimming="CharacterEllipsis" Text="{Binding Name}" />
+                                    <TextBlock Style="{StaticResource TextMuted}" FontSize="11" Text="{Binding LastPlayedText}" />
+                                </StackPanel>
+                                <DataTemplate.Triggers>
+                                    <DataTrigger Binding="{Binding HasCover}" Value="True">
+                                        <Setter TargetName="Initials" Property="Visibility" Value="Collapsed" />
+                                        <Setter TargetName="Fill" Property="Visibility" Value="Visible" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding CoverIsIcon}" Value="True">
+                                        <Setter TargetName="Fill" Property="Visibility" Value="Collapsed" />
+                                        <Setter TargetName="Icon" Property="Visibility" Value="Visible" />
+                                    </DataTrigger>
+                                </DataTemplate.Triggers>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </Border>
+
             <!-- ======================================================== monitor ao vivo -->
             <Border Style="{StaticResource CardPanel}" Margin="0,12,0,0">
                 <StackPanel>

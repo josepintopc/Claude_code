@@ -150,6 +150,12 @@ if (argList.Count >= 2 && argList[0] == "disk" && argList[1] == "health")
     return Phase3Commands.DiskHealthInfo();
 }
 
+if (argList.Count >= 2 && argList[0] == "games" && argList[1] == "list")
+{
+    if (!OperatingSystem.IsWindows()) { Console.Error.WriteLine(Loc.T("cli.gpu.notWindows")); return 3; }
+    return GamesCommands.List(Flag("--json"));
+}
+
 Console.Error.WriteLine(Loc.T("cli.unknown"));
 Console.WriteLine(Loc.T("cli.usage"));
 return 1;

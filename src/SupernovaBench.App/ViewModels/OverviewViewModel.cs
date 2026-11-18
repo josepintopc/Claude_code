@@ -14,7 +14,9 @@ public sealed partial class OverviewViewModel : LocalizedViewModel
     {
         _main = main;
         AppServices.History.Changed += (_, _) => System.Windows.Application.Current?.Dispatcher.InvokeAsync(RefreshScores);
+        AppServices.Games.Changed += (_, _) => System.Windows.Application.Current?.Dispatcher.InvokeAsync(RefreshRecentGames);
         RefreshScores();
+        RefreshRecentGames();
         _ = LoadSummaryAsync();
     }
 
@@ -69,11 +71,39 @@ public sealed partial class OverviewViewModel : LocalizedViewModel
         HasScore = multi != null || single != null || gpu != null || mem != null || disk != null;
     }
 
+    /// <summary>Até 4 jogos jogados por último (pelo Supernova ou pela Steam).</summary>
+    public System.Collections.ObjectModel.ObservableCollection<GameCard> RecentGames { get; } = new();
+
+    [ObservableProperty] private bool _hasRecentGames;
+
+    private void RefreshRecentGames()
+    {
+        var games = AppServices.Games;
+        var recent = games.Games.Where(g => !games.Store.IsHidden(g.Id) && games.LastPlayed(g) != null)
+                                .OrderByDescending(g => games.LastPlayed(g)).Take(4).ToList();
+        if (recent.Select(g => g.Id).SequenceEqual(RecentGames.Select(c => c.Game.Id)))
+        {
+            foreach (var c in RecentGames) c.Refresh();
+            return;
+        }
+        RecentGames.Clear();
+        foreach (var g in recent) RecentGames.Add(new GameCard(g));
+        HasRecentGames = RecentGames.Count > 0;
+    }
+
     [RelayCommand]
     private void Open(string key) => _main.Navigate(key);
 
+    [RelayCommand]
+    private void OpenGame(GameCard? card)
+    {
+        _main.Navigate("games");
+        if (card != null) _main.Games.Select(card.Game.Id);
+    }
+
     protected override void OnLanguageChanged()
     {
+        foreach (var c in RecentGames) c.Refresh();
         RefreshScores();
         base.OnLanguageChanged();
     }

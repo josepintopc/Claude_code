@@ -14,6 +14,8 @@ public static class AppServices
     public static SensorService Sensors { get; private set; } = null!;
     public static SystemInfoService SystemInfo { get; } = new();
     public static GpuService Gpu { get; } = new();
+    public static GameService Games { get; private set; } = null!;
+    public static CoverService Covers { get; } = new();
     public static MainViewModel? Main { get; set; }
 
     /// <summary>Só lê as preferências e aplica o idioma (usado quando o app já está aberto).</summary>
@@ -33,6 +35,7 @@ public static class AppServices
         ThemeManager.Apply(Settings.Theme);
         History = new ResultHistory();
         Sensors = new SensorService { IntervalMs = Settings.SensorIntervalMs };
+        Games = new GameService();
     }
 
     public static void TrySaveSettings()
@@ -43,6 +46,7 @@ public static class AppServices
 
     public static void Shutdown()
     {
+        Games?.Shutdown();
         Sensors?.Dispose();
     }
 }

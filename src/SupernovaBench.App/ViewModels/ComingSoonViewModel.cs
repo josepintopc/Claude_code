@@ -7,7 +7,6 @@ public sealed class ComingSoonViewModel : LocalizedViewModel
 {
     private static readonly Dictionary<string, string> TextKey = new()
     {
-        ["games"] = "soon.games",
         ["drivers"] = "soon.drivers",
     };
 

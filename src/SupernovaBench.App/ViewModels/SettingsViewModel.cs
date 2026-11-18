@@ -87,6 +87,26 @@ public sealed partial class SettingsViewModel : LocalizedViewModel
         AppServices.TrySaveSettings();
     }
 
+    /// <summary>Baixar capas da internet (CDN e busca da loja Steam).</summary>
+    public bool DownloadCovers
+    {
+        get => AppServices.Settings.DownloadCovers;
+        set
+        {
+            if (AppServices.Settings.DownloadCovers == value) return;
+            AppServices.Settings.DownloadCovers = value;
+            AppServices.TrySaveSettings();
+            OnPropertyChanged();
+        }
+    }
+
+    [RelayCommand]
+    private void ClearCovers()
+    {
+        try { AppServices.Covers.ClearCache(); }
+        catch (Exception ex) { App.Log(ex); }
+    }
+
     [RelayCommand]
     private void OpenDataFolder() => Shell.Open(AppPaths.Root);
 

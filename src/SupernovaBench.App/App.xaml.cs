@@ -42,6 +42,7 @@ public partial class App : Application
         window.Show();
 
         AppServices.Sensors.Start();
+        AppServices.Games.Start();
     }
 
     protected override void OnExit(ExitEventArgs e)

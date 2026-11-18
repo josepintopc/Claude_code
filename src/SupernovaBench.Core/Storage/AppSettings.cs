@@ -7,6 +7,9 @@ public sealed class AppSettings
     public string Theme { get; set; } = "cosmic";
     public int SensorIntervalMs { get; set; } = 1000;
 
+    /// <summary>Baixar capas de jogos do CDN da Steam (o nome do jogo vai para a busca da loja Steam).</summary>
+    public bool DownloadCovers { get; set; } = true;
+
     public static AppSettings Load(string? path = null)
     {
         var s = JsonFile.Load<AppSettings>(path ?? AppPaths.SettingsFile) ?? new AppSettings();

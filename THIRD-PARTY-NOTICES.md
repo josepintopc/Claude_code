@@ -61,3 +61,15 @@ https://github.com/dotnet/runtime — Copyright (c) .NET Foundation and Contribu
 O app pode instalar o driver PawnIO pelo winget, a pedido do usuário. Ele não é distribuído junto com o Supernova Bench.
 The app can install the PawnIO driver via winget when the user asks. It is not distributed with Supernova Bench.
 https://pawnio.eu
+
+---
+
+## Capas de jogos / Game covers
+
+O Supernova Bench não traz nenhuma capa embutida. As capas mostradas na Biblioteca são baixadas, no PC do usuário, do CDN
+público da Steam (`cdn.cloudflare.steamstatic.com`) ou lidas do cache local da própria Steam, e pertencem aos respectivos
+donos (publicadoras e Valve). O download pode ser desligado em Configurações → Biblioteca de jogos.
+
+Supernova Bench does not ship any game artwork. Covers shown in the Library are downloaded on the user's PC from Steam's
+public CDN or read from Steam's own local cache, and belong to their respective owners. Downloading can be turned off in
+Settings → Game library.

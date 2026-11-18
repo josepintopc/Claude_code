@@ -5,8 +5,8 @@
 Supernova Bench é um app para Windows 10/11 que junta, num só programa, o que normalmente exige vários:
 informações de hardware no estilo **CPU-Z / GPU-Z / AIDA64**, benchmark de CPU no estilo **Cinebench**,
 benchmark de GPU com cena 3D, stress de GPU no estilo **FurMark**, sensores em tempo real, benchmark de memória e cache no estilo
-**AIDA64**, benchmark de disco no estilo **CrystalDiskMark**, saúde SMART no estilo **CrystalDiskInfo**, stress de CPU e teste de RAM
-e, nas próximas fases, **launcher de jogos** e **atualizador de drivers**. Interface em **português (padrão) e inglês**, tema **escuro cósmico** ou claro.
+**AIDA64**, benchmark de disco no estilo **CrystalDiskMark**, saúde SMART no estilo **CrystalDiskInfo**, stress de CPU, teste de RAM,
+**biblioteca de jogos** de todos os launchers e, na próxima fase, **atualizador de drivers**. Interface em **português (padrão) e inglês**, tema **escuro cósmico** ou claro.
 
 > Projeto inspirado no [ResetExplode](https://github.com/GustavoReset/ResetExplode) (MIT), de Gustavo (GustavoReset).
 > O motor de benchmark de CPU, a coleta via WMI e o monitor de sensores foram portados e adaptados de lá — veja
@@ -43,11 +43,21 @@ e, nas próximas fases, **launcher de jogos** e **atualizador de drivers**. Inte
 | **Stress de CPU** | Três cargas (calor máximo com FMA/AVX, render realista e inteiros), todas as threads, metade ou uma, **limite de temperatura** (80 a 95 °C) e duração. Cada bloco de cálculo é conferido: um resultado diferente é um **erro de cálculo** (CPU instável), como no Prime95. Gráfico de temperatura ao vivo, clock, consumo e carga. |
 | **Teste de RAM** (TestMem5 / HCI MemTest) | Ocupa 50, 70 ou 85% da memória livre, divide entre as threads e repete quatro padrões (endereço, inversões móveis, bit andando e aleatório), com cobertura, velocidade e lista de erros (posição, esperado, lido). Resultado **Aprovado / Reprovado**. Não alcança a memória já usada pelo Windows (para isso, MemTest86). |
 
+## Fase 4 — Jogos
+
+| Módulo | O que faz |
+|---|---|
+| **Biblioteca** (estilo Playnite / GOG Galaxy) | Encontra sozinho os jogos instalados pela **Steam** (todas as bibliotecas, com o tempo de jogo da própria Steam), **Epic Games**, **GOG Galaxy**, **Ubisoft Connect**, **EA app**, **Battle.net** e **app Xbox / Game Pass**, além de jogos adicionados à mão (.exe). Grade de capas com busca, filtro por loja e ordenação (recentes, nome, mais jogados), favoritos e ocultos. **Jogar** abre o jogo pelo launcher dele. |
+| **Capas** | Cache da própria Steam, CDN da Steam (para jogos de outras lojas, pela busca da loja Steam pelo nome — pode ser desligado nas Configurações), ícone do executável ou as iniciais. Ficam em `%AppData%\SupernovaBench\covers`. |
+| **Tempo de jogo** | Com o Supernova aberto, ele percebe quando um jogo está rodando (por qualquer launcher) e conta o tempo, as sessões e a última partida. Para jogos da Steam, mostra o tempo registrado pela Steam. |
+| **Perfil de desempenho por jogo** | Plano de energia (alto desempenho / desempenho máximo / equilibrado) aplicado quando o jogo abre e desfeito quando fecha, prioridade do processo e **GPU preferida** (o mesmo ajuste das Configurações de gráficos do Windows, útil em notebooks com duas placas). |
+
+A Visão geral mostra os jogos jogados recentemente.
+
 ### Próximas fases
 
 | Fase | Conteúdo |
 |---|---|
-| 4 — Jogos | Biblioteca com jogos da Steam, Epic, GOG, Ubisoft, EA, Battle.net e Xbox; capas, perfis de desempenho por jogo e tempo de jogo. |
 | 5 — Drivers | Inventário de drivers, busca de atualizações (Windows Update, NVIDIA, AMD, Intel) e ponto de restauração antes de instalar. |
 | 6 — Extras | Overlay de FPS, detector de gargalo e comparação online. |
 
@@ -96,6 +106,7 @@ supernova-cli bench disk [--drive C | --path PASTA] [--size 256m|1g|4g] [--runs 
 supernova-cli stress cpu [--mode fma|render|int] [--threads N] [--seconds N]
 supernova-cli stress ram [--mb N | --percent P] [--seconds N]
 supernova-cli disk health
+supernova-cli games list [--json]
 supernova-cli gpu info
 supernova-cli info
 ```
@@ -108,6 +119,7 @@ src/
                             histórico, relatórios, traduções (multiplataforma)
   SupernovaBench.Hardware/  WMI, registro, LibreHardwareMonitor e saúde dos discos (SMART/NVMe) (Windows)
   SupernovaBench.Graphics/  Direct3D 11 (Vortice): stress de GPU, cena 3D, DXGI, NVML e dados estilo GPU-Z (Windows)
+  SupernovaBench.Games/     launchers de jogos (registro e arquivos), processos, plano de energia e GPU preferida (Windows)
   SupernovaBench.App/       interface WPF (MVVM): Views, ViewModels, Themes, Localization
   SupernovaBench.Cli/       benchmarks pela linha de comando
 tests/SupernovaBench.Core.Tests/     testes do núcleo (rodam em qualquer sistema)
@@ -118,7 +130,7 @@ tests/SupernovaBench.App.Tests/      abre todas as páginas da interface nos doi
 - **Traduções:** `src/SupernovaBench.Core/Localization/Strings/pt-BR.json` e `en.json`. Para outro idioma, crie um JSON com as
   mesmas chaves e registre-o em `Loc.Languages` — um teste garante que todos os idiomas têm as mesmas chaves.
 - **Temas:** `src/SupernovaBench.App/Themes/Cosmic.xaml` e `Light.xaml` (só cores); estilos em `Controls.xaml`.
-- **Dados do usuário:** `%AppData%\SupernovaBench` (`settings.json`, `history.json`, `supernova.log`).
+- **Dados do usuário:** `%AppData%\SupernovaBench` (`settings.json`, `history.json`, `games.json`, `covers\`, `supernova.log`).
 
 ---
 
@@ -129,5 +141,6 @@ a Cinebench-style CPU path-tracing benchmark (multi-core, single-core, 10-minute
 GPU benchmark (average FPS and 1% low), a FurMark-style GPU stress test with a temperature cutoff, GPU-Z-style card
 details (NVML/DXGI), an AIDA64-style cache and memory benchmark, a CrystalDiskMark-style disk benchmark,
 CrystalDiskInfo-style SMART health (NVMe and SATA), a CPU stress test with calculation-error detection, an in-Windows
-RAM stability test, HTML/JSON reports and cross-PC comparison. Upcoming phases add a game launcher and a driver updater. The UI is available in Portuguese (default) and English, with a cosmic dark theme or a light theme.
+RAM stability test, a game library for Steam, Epic, GOG, Ubisoft, EA, Battle.net and Xbox (covers, playtime tracking and
+per-game performance profiles), HTML/JSON reports and cross-PC comparison. The next phase adds a driver updater. The UI is available in Portuguese (default) and English, with a cosmic dark theme or a light theme.
 Download the latest build from **Actions → Build → Artifacts**. Licensed under MIT; see [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).

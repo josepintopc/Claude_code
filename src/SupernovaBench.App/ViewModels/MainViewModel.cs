@@ -51,7 +51,7 @@ public sealed partial class MainViewModel : LocalizedViewModel
             }),
             new NavGroup("nav.section.games", new[]
             {
-                I("games", "nav.games.library", GGames, 4),
+                I("games", "nav.games.library", GGames),
             }),
             new NavGroup("nav.section.tools", new[]
             {
@@ -110,6 +110,7 @@ public sealed partial class MainViewModel : LocalizedViewModel
             "stress.cpu" => CpuStress,
             "stress.ram" => RamStress,
             "health.disk" => new DiskHealthViewModel(),
+            "games" => Games,
             "reports" => new ReportsViewModel(),
             "settings" => new SettingsViewModel(this),
             _ => new ComingSoonViewModel(item, _items.Values.Where(i => i.IsSoon).ToList()),
@@ -127,6 +128,9 @@ public sealed partial class MainViewModel : LocalizedViewModel
 
     public GpuStressViewModel GpuStress => _gpuStress ??= new GpuStressViewModel();
     private GpuStressViewModel? _gpuStress;
+
+    public GamesViewModel Games => _games ??= new GamesViewModel();
+    private GamesViewModel? _games;
 
     public MemoryBenchViewModel MemoryBench => _memoryBench ??= new MemoryBenchViewModel();
     private MemoryBenchViewModel? _memoryBench;
