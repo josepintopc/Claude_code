@@ -74,9 +74,6 @@ A Visão geral mostra os jogos jogados recentemente.
 | **Overlay** | Janela transparente por cima do jogo (não recebe cliques nem foco) com FPS, tempo de quadro, CPU, GPU e gargalo. **Ctrl+Shift+O** liga/desliga. Posição e opacidade ajustáveis. Funciona em janela e tela cheia sem bordas. |
 | **Comparação online** | Ranking dos seus resultados contra os enviados pela comunidade (mesmo teste, preset e versão do motor), com posição e percentil. **Enviar meu resultado** abre uma issue já preenchida no GitHub; a automação [`community-results.yml`](.github/workflows/community-results.yml) valida só os campos públicos, grava em [`community/results.json`](community/results.json) e responde na issue. Requer o repositório **público**. |
 
----|---|
-| 6 — Extras | Overlay de FPS, detector de gargalo e comparação online. |
-
 ---
 
 ## Download

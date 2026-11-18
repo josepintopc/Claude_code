@@ -135,7 +135,8 @@ public sealed class SensorMonitor : IDisposable
 
     public float? CpuLoad => Of(HardwareType.Cpu, SensorType.Load).FirstOrDefault(r => r.Name == "CPU Total")?.RawValue;
 
-    public float? CpuPower => Of(HardwareType.Cpu, SensorType.Power).FirstOrDefault(r => r.Name.Contains("Package"))?.RawValue;
+    /// <summary>Consumo do pacote (W). Sem o driver (PawnIO) o sensor pode existir zerado: aí é "indisponível", não 0 W.</summary>
+    public float? CpuPower => Of(HardwareType.Cpu, SensorType.Power).FirstOrDefault(r => r.Name.Contains("Package") && r.RawValue > 0)?.RawValue;
 
     /// <summary>Carga do núcleo (ou thread) mais ocupado: revela jogos presos em uma thread só.</summary>
     public float? CpuMaxCoreLoad
