@@ -118,7 +118,7 @@ public static class ReportBuilder
         return sb.ToString();
     }
 
-    /// <summary>Detalhes do resultado: threads (CPU) ou resolução, FPS médio e 1% low (GPU).</summary>
+    /// <summary>Detalhes do resultado: threads (CPU), resolução e FPS (GPU), banda e latência (memória) ou velocidades (disco).</summary>
     public static string Details(BenchmarkResult r, System.Globalization.CultureInfo culture)
     {
         if (r.AvgFps is { } avg)
@@ -129,6 +129,12 @@ public static class ReportBuilder
             if (r.Low1Fps is { } low) parts.Add(Loc.T("report.low1", low.ToString("N0", culture)));
             return string.Join(" · ", parts);
         }
+        if (r.Test == TestIds.MemoryBench && r.Metric("mem.read") is { } read)
+            return Loc.T("report.memory", read.ToString("N1", culture), (r.Metric("mem.write") ?? 0).ToString("N1", culture),
+                         (r.Metric("mem.latency") ?? 0).ToString("N1", culture));
+        if (r.Test == TestIds.DiskBench && r.Metric("seq1m_q8t1.read") is { } seqRead)
+            return Loc.T("report.disk", seqRead.ToString("N0", culture), (r.Metric("seq1m_q8t1.write") ?? 0).ToString("N0", culture),
+                         (r.Metric("rnd4k_q1t1.read") ?? 0).ToString("N1", culture));
         return Loc.T("report.threads", r.Threads);
     }
 

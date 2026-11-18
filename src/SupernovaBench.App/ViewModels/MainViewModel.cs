@@ -13,6 +13,8 @@ public sealed partial class MainViewModel : LocalizedViewModel
                          GMemory = "", GDisk = "", GStress = "", GGames = "", GDrivers = "",
                          GReports = "", GSettings = "";
 
+    private const string GHealth = "\uE95E";
+
     private readonly Dictionary<string, object> _pages = new();
     private readonly Dictionary<string, NavItem> _items = new();
 
@@ -32,19 +34,20 @@ public sealed partial class MainViewModel : LocalizedViewModel
                 I("overview", "nav.overview", GHome),
                 I("hardware", "nav.hardware", GHardware),
                 I("sensors", "nav.sensors", GSensors),
+                I("health.disk", "nav.health.disk", GHealth),
             }),
             new NavGroup("nav.section.benchmark", new[]
             {
                 I("bench.cpu", "nav.bench.cpu", GCpu),
                 I("bench.gpu", "nav.bench.gpu", GGpu),
-                I("bench.memory", "nav.bench.memory", GMemory, 3),
-                I("bench.disk", "nav.bench.disk", GDisk, 3),
+                I("bench.memory", "nav.bench.memory", GMemory),
+                I("bench.disk", "nav.bench.disk", GDisk),
             }),
             new NavGroup("nav.section.stress", new[]
             {
-                I("stress.cpu", "nav.stress.cpu", GStress, 3),
+                I("stress.cpu", "nav.stress.cpu", GStress),
                 I("stress.gpu", "nav.stress.gpu", GStress),
-                I("stress.ram", "nav.stress.ram", GMemory, 3),
+                I("stress.ram", "nav.stress.ram", GMemory),
             }),
             new NavGroup("nav.section.games", new[]
             {
@@ -102,6 +105,11 @@ public sealed partial class MainViewModel : LocalizedViewModel
             "bench.cpu" => CpuBench,
             "bench.gpu" => GpuBench,
             "stress.gpu" => GpuStress,
+            "bench.memory" => MemoryBench,
+            "bench.disk" => DiskBench,
+            "stress.cpu" => CpuStress,
+            "stress.ram" => RamStress,
+            "health.disk" => new DiskHealthViewModel(),
             "reports" => new ReportsViewModel(),
             "settings" => new SettingsViewModel(this),
             _ => new ComingSoonViewModel(item, _items.Values.Where(i => i.IsSoon).ToList()),
@@ -120,13 +128,31 @@ public sealed partial class MainViewModel : LocalizedViewModel
     public GpuStressViewModel GpuStress => _gpuStress ??= new GpuStressViewModel();
     private GpuStressViewModel? _gpuStress;
 
-    public bool IsBenchmarkRunning => _cpuBench?.IsRunning == true || _gpuBench?.IsRunning == true || _gpuStress?.IsRunning == true;
+    public MemoryBenchViewModel MemoryBench => _memoryBench ??= new MemoryBenchViewModel();
+    private MemoryBenchViewModel? _memoryBench;
+
+    public DiskBenchViewModel DiskBench => _diskBench ??= new DiskBenchViewModel();
+    private DiskBenchViewModel? _diskBench;
+
+    public CpuStressViewModel CpuStress => _cpuStress ??= new CpuStressViewModel();
+    private CpuStressViewModel? _cpuStress;
+
+    public RamStressViewModel RamStress => _ramStress ??= new RamStressViewModel();
+    private RamStressViewModel? _ramStress;
+
+    public bool IsBenchmarkRunning => _cpuBench?.IsRunning == true || _gpuBench?.IsRunning == true || _gpuStress?.IsRunning == true
+                                      || _memoryBench?.IsRunning == true || _diskBench?.IsRunning == true
+                                      || _cpuStress?.IsRunning == true || _ramStress?.IsRunning == true;
 
     public void StopBenchmarks()
     {
         _cpuBench?.StopCommand.Execute(null);
         _gpuBench?.StopNow();
         _gpuStress?.StopNow();
+        _memoryBench?.StopNow();
+        _diskBench?.StopNow();
+        _cpuStress?.StopNow();
+        _ramStress?.StopNow();
     }
 
     [RelayCommand]

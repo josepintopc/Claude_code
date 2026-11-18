@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\SupernovaBench.Graphics\SupernovaBench.Graphics.csproj" />
+    <ProjectReference Include="..\..\src\SupernovaBench.Hardware\SupernovaBench.Hardware.csproj" />
   </ItemGroup>
 
 </Project>

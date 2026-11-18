@@ -7,8 +7,10 @@ public static class TestIds
     public const string CpuSingle = "cpu.single";
     public const string CpuSustained = "cpu.sustained";
     public const string GpuScene = "gpu.scene";
+    public const string MemoryBench = "mem.bench";
+    public const string DiskBench = "disk.bench";
 
-    public static readonly IReadOnlyList<string> All = new[] { CpuMulti, CpuSingle, CpuSustained, GpuScene };
+    public static readonly IReadOnlyList<string> All = new[] { CpuMulti, CpuSingle, CpuSustained, GpuScene, MemoryBench, DiskBench };
 
     public static bool IsGpu(string testId) => testId.StartsWith("gpu.", StringComparison.Ordinal);
 
@@ -37,8 +39,17 @@ public sealed record BenchmarkResult
     /// <summary>Resolução de renderização (testes de GPU), ex.: "1920x1080".</summary>
     public string? Resolution { get; init; }
 
-    /// <summary>Hardware avaliado pelo teste: a GPU nos testes de GPU, a CPU nos de CPU.</summary>
-    public string DeviceName => TestIds.IsGpu(Test) && !string.IsNullOrWhiteSpace(GpuName) ? GpuName! : CpuName;
+    /// <summary>Hardware avaliado quando não é a CPU nem a GPU: o kit de memória ou o modelo do disco.</summary>
+    public string? Device { get; init; }
+
+    /// <summary>Medidas detalhadas (memória: "mem.read", "l1.latency"...; disco: "seq1m_q8t1.read"...).</summary>
+    public Dictionary<string, double>? Metrics { get; init; }
+
+    public double? Metric(string key) => Metrics != null && Metrics.TryGetValue(key, out var v) ? v : null;
+
+    /// <summary>Hardware avaliado pelo teste: memória/disco, a GPU nos testes de GPU, a CPU nos de CPU.</summary>
+    public string DeviceName => !string.IsNullOrWhiteSpace(Device) ? Device!
+                              : TestIds.IsGpu(Test) && !string.IsNullOrWhiteSpace(GpuName) ? GpuName! : CpuName;
     public int Threads { get; init; }
     public double Seconds { get; init; }
     public long Samples { get; init; }

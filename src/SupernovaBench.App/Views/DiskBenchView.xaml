@@ -1,0 +1,177 @@
+<UserControl x:Class="SupernovaBench.App.Views.DiskBenchView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="clr-namespace:SupernovaBench.App.Localization"
+             xmlns:vm="clr-namespace:SupernovaBench.App.ViewModels"
+             xmlns:c="clr-namespace:SupernovaBench.App.Controls">
+    <UserControl.Resources>
+        <c:BoolToVisibilityConverter x:Key="BoolToVis" />
+        <c:EmptyToVisibilityConverter x:Key="EmptyToVis" />
+
+        <DataTemplate x:Key="ChipTemplate" DataType="{x:Type vm:Option}">
+            <RadioButton Style="{StaticResource Chip}" GroupName="{Binding Tag, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                         Content="{Binding Label}" IsChecked="{Binding IsSelected, Mode=TwoWay}" />
+        </DataTemplate>
+        <ItemsPanelTemplate x:Key="WrapPanelTemplate">
+            <WrapPanel />
+        </ItemsPanelTemplate>
+        <Style x:Key="HeadCell" TargetType="TextBlock" BasedOn="{StaticResource Caption}">
+            <Setter Property="HorizontalAlignment" Value="Right" />
+            <Setter Property="Margin" Value="0,0,16,0" />
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Margin="4,0,8,8">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="12" />
+            <ColumnDefinition Width="340" />
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Grid.ColumnSpan="3" Margin="0,4,0,14">
+            <TextBlock Style="{StaticResource H1}" Text="{loc:Tr disk.title}" />
+            <TextBlock Style="{StaticResource TextMuted}" Text="{loc:Tr disk.subtitle}" />
+        </StackPanel>
+
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <!-- unidade e opções -->
+                <Border Style="{StaticResource CardPanel}">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Border Width="44" Height="44" CornerRadius="12" Background="{DynamicResource AccentGradient}">
+                                <TextBlock Style="{StaticResource Glyph}" HorizontalAlignment="Center" FontSize="20"
+                                           Foreground="{DynamicResource OnAccent}" Text="&#xEDA2;" />
+                            </Border>
+                            <StackPanel Margin="14,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Style="{StaticResource Caption}" Text="{loc:Tr disk.drive}" />
+                                <TextBlock Style="{StaticResource Body}" FontWeight="SemiBold" TextWrapping="Wrap" Text="{Binding DriveDetail}" />
+                            </StackPanel>
+                        </StackPanel>
+
+                        <StackPanel IsEnabled="{Binding IsIdle}">
+                            <ItemsControl Tag="diskdrive" Margin="0,14,0,0" ItemsSource="{Binding Drives}" ItemTemplate="{StaticResource ChipTemplate}"
+                                          ItemsPanel="{StaticResource WrapPanelTemplate}" />
+                            <TextBlock Style="{StaticResource Caption}" Margin="0,8,0,8" Text="{loc:Tr disk.size}" />
+                            <ItemsControl Tag="disksize" ItemsSource="{Binding Sizes}" ItemTemplate="{StaticResource ChipTemplate}"
+                                          ItemsPanel="{StaticResource WrapPanelTemplate}" />
+                            <TextBlock Style="{StaticResource Caption}" Margin="0,8,0,8" Text="{loc:Tr disk.runs}" />
+                            <ItemsControl Tag="diskruns" ItemsSource="{Binding RunOptions}" ItemTemplate="{StaticResource ChipTemplate}"
+                                          ItemsPanel="{StaticResource WrapPanelTemplate}" />
+                        </StackPanel>
+
+                        <TextBlock Style="{StaticResource TextMuted}" FontSize="12" Margin="0,8,0,0" TextWrapping="Wrap" Text="{loc:Tr disk.hint}" />
+
+                        <Grid Margin="0,14,0,0" HorizontalAlignment="Left" MinWidth="220">
+                            <Button Style="{StaticResource PrimaryButton}" Command="{Binding StartCommand}"
+                                    Visibility="{Binding IsIdle, Converter={StaticResource BoolToVis}}">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Style="{StaticResource Glyph}" FontSize="13" Foreground="{DynamicResource OnAccent}" Text="&#xE768;" />
+                                    <TextBlock Margin="8,0,0,0" Text="{loc:Tr cpu.start}" />
+                                </StackPanel>
+                            </Button>
+                            <Button Command="{Binding StopCommand}" Padding="20,10"
+                                    Visibility="{Binding IsRunning, Converter={StaticResource BoolToVis}}">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Style="{StaticResource Glyph}" FontSize="13" Foreground="{DynamicResource Bad}" Text="&#xE71A;" />
+                                    <TextBlock Margin="8,0,0,0" Text="{loc:Tr cpu.stop}" />
+                                </StackPanel>
+                            </Button>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- grade estilo CrystalDiskMark -->
+                <Border Style="{StaticResource CardPanel}" Margin="0,12,0,0">
+                    <StackPanel>
+                        <DockPanel>
+                            <TextBlock DockPanel.Dock="Right" Style="{StaticResource Mono}" Text="{Binding ElapsedText}" />
+                            <TextBlock FontWeight="SemiBold" Text="{Binding StatusText}" TextTrimming="CharacterEllipsis" />
+                        </DockPanel>
+                        <ProgressBar Margin="0,10,0,12" Maximum="100" Value="{Binding Progress, Mode=OneWay}" />
+
+                        <DockPanel Margin="0,0,0,8">
+                            <ItemsControl DockPanel.Dock="Right" Tag="diskunit" ItemsSource="{Binding Units}" ItemTemplate="{StaticResource ChipTemplate}"
+                                          ItemsPanel="{StaticResource WrapPanelTemplate}" />
+                            <TextBlock Style="{StaticResource Caption}" VerticalAlignment="Center" Text="{loc:Tr disk.unit}" />
+                        </DockPanel>
+
+                        <Grid Margin="0,0,0,6">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="150" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="1" Style="{StaticResource HeadCell}">
+                                <Run Text="{loc:Tr disk.read}" /><Run Text=" (" /><Run Text="{Binding UnitHeader, Mode=OneWay}" /><Run Text=")" />
+                            </TextBlock>
+                            <TextBlock Grid.Column="2" Style="{StaticResource HeadCell}">
+                                <Run Text="{loc:Tr disk.write}" /><Run Text=" (" /><Run Text="{Binding UnitHeader, Mode=OneWay}" /><Run Text=")" />
+                            </TextBlock>
+                        </Grid>
+
+                        <ItemsControl ItemsSource="{Binding Rows}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate DataType="{x:Type vm:DiskRow}">
+                                    <Grid Margin="0,0,0,8">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="150" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <Border CornerRadius="10" Padding="12,0" Background="{DynamicResource AccentGradientHorizontal}">
+                                            <TextBlock VerticalAlignment="Center" FontWeight="Bold" Foreground="{DynamicResource OnAccent}" Text="{Binding Label}" />
+                                        </Border>
+                                        <Border x:Name="ReadCell" Grid.Column="1" Margin="8,0,0,0" Padding="0,10,16,10" CornerRadius="10" Background="{DynamicResource Card}">
+                                            <TextBlock Style="{StaticResource Mono}" FontSize="24" FontWeight="SemiBold" HorizontalAlignment="Right" Text="{Binding ReadText}" />
+                                        </Border>
+                                        <Border x:Name="WriteCell" Grid.Column="2" Margin="8,0,0,0" Padding="0,10,16,10" CornerRadius="10" Background="{DynamicResource Card}">
+                                            <TextBlock Style="{StaticResource Mono}" FontSize="24" FontWeight="SemiBold" HorizontalAlignment="Right" Text="{Binding WriteText}" />
+                                        </Border>
+                                    </Grid>
+                                    <DataTemplate.Triggers>
+                                        <DataTrigger Binding="{Binding ReadActive}" Value="True">
+                                            <Setter TargetName="ReadCell" Property="Background" Value="{DynamicResource AccentSoft}" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding WriteActive}" Value="True">
+                                            <Setter TargetName="WriteCell" Property="Background" Value="{DynamicResource AccentSoft}" />
+                                        </DataTrigger>
+                                    </DataTemplate.Triggers>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Border>
+
+                <!-- pontuação -->
+                <Border Style="{StaticResource Hero}" Margin="0,12,0,0" Visibility="{Binding HasScore, Converter={StaticResource BoolToVis}}">
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource TextMuted}" FontSize="16" Text="{loc:Tr cpu.score}" />
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Style="{StaticResource BigNumber}" FontSize="60" Text="{Binding ScoreText}" />
+                            <TextBlock Margin="10,0,0,10" VerticalAlignment="Bottom" FontSize="22" Style="{StaticResource TextMuted}" Text="{loc:Tr cpu.points}" />
+                        </StackPanel>
+                        <TextBlock FontSize="16" FontWeight="SemiBold" Foreground="{DynamicResource Good}" Text="{loc:Tr cpu.newBest}"
+                                   Visibility="{Binding IsNewBest, Converter={StaticResource BoolToVis}}" />
+                        <TextBlock Style="{StaticResource TextMuted}" FontSize="12" Margin="0,6,0,0" TextWrapping="Wrap" Text="{loc:Tr disk.scoreHint}" />
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+
+        <ScrollViewer Grid.Row="1" Grid.Column="2" VerticalScrollBarVisibility="Auto">
+            <Border Style="{StaticResource CardPanel}">
+                <StackPanel>
+                    <TextBlock Style="{StaticResource H2}" Text="{loc:Tr cpu.ranking}" />
+                    <TextBlock Style="{StaticResource TextMuted}" Margin="0,6,0,0" TextWrapping="Wrap" Text="{loc:Tr ranking.empty}"
+                               Visibility="{Binding Ranking.Count, Converter={StaticResource EmptyToVis}, ConverterParameter=invert}" />
+                    <ItemsControl Margin="0,4,0,0" ItemsSource="{Binding Ranking}" ItemTemplate="{StaticResource RankingRowTemplate}" />
+                </StackPanel>
+            </Border>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

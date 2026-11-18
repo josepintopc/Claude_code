@@ -392,6 +392,13 @@ public static class SystemInfoCollector
         try { physical = Query("SELECT FriendlyName, MediaType, BusType, HealthStatus, SerialNumber FROM MSFT_PhysicalDisk", @"root\Microsoft\Windows\Storage"); }
         catch { }
 
+        var health = new Dictionary<int, DiskHealth>();
+        try
+        {
+            foreach (var h in DiskInfo.ReadHealth()) health[h.DiskNumber] = h;
+        }
+        catch { }
+
         foreach (var d in Query("SELECT * FROM Win32_DiskDrive"))
         {
             string model = S(d, "Model");
@@ -413,6 +420,13 @@ public static class SystemInfoCollector
             else
             {
                 disk.Add(T("hw.disk.interface"), S(d, "InterfaceType"));
+            }
+            if (health.TryGetValue(Convert.ToInt32(d["Index"] ?? -1), out var hd) && hd.Status != HealthStatus.Unknown)
+            {
+                disk.Add(T("hw.disk.smart"), DiskInfo.StatusText(hd));
+                if (hd.TemperatureC is { } temp) disk.Add(T("health.temperature"), $"{temp} °C");
+                if (hd.PowerOnHours is { } hours) disk.Add(T("health.powerOnHours"), T("health.hours", hours.ToString("N0", Culture)));
+                if (hd.HostWrittenBytes is { } written) disk.Add(T("health.written"), Bytes(written));
             }
             disk.Add(T("hw.disk.partitions"), S(d, "Partitions"));
             disk.Add("Firmware", S(d, "FirmwareRevision"));

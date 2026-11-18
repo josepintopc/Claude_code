@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <InternalsVisibleTo Include="SupernovaBench.Core.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
     <!-- Tabelas de tradução (pt-BR, en). Novos idiomas: basta adicionar um JSON com as mesmas chaves. -->
     <EmbeddedResource Include="Localization\Strings\*.json" LogicalName="SupernovaBench.Strings.%(Filename).json" />
   </ItemGroup>

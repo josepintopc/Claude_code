@@ -1,5 +1,6 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:vm="clr-namespace:SupernovaBench.App.ViewModels">
 
     <!-- ================================================================== fontes -->
     <FontFamily x:Key="UiFont">Segoe UI Variable Text, Segoe UI</FontFamily>
@@ -483,4 +484,25 @@
         <Setter Property="VirtualizingPanel.IsVirtualizingWhenGrouping" Value="True" />
         <Setter Property="VirtualizingPanel.ScrollUnit" Value="Pixel" />
     </Style>
+
+    <!-- ================================================================== linha de ranking (benchmarks da Fase 3) -->
+    <DataTemplate x:Key="RankingRowTemplate" DataType="{x:Type vm:RankingRow}">
+        <Border x:Name="Row" Margin="0,6,0,0" Padding="10,8" CornerRadius="10" Background="Transparent">
+            <StackPanel>
+                <DockPanel>
+                    <TextBlock DockPanel.Dock="Right" Style="{StaticResource Mono}" FontWeight="Bold" Text="{Binding ScoreText}" />
+                    <TextBlock Style="{StaticResource TextMuted}" Width="24" Text="{Binding Position}" />
+                    <TextBlock Text="{Binding Label}" TextTrimming="CharacterEllipsis" FontWeight="SemiBold" />
+                </DockPanel>
+                <TextBlock Margin="24,0,0,0" FontSize="11" Style="{StaticResource TextMuted}" Text="{Binding Detail}" TextTrimming="CharacterEllipsis" />
+                <ProgressBar Margin="24,6,0,0" Height="6" Maximum="100" Value="{Binding Percent, Mode=OneWay}" />
+            </StackPanel>
+        </Border>
+        <DataTemplate.Triggers>
+            <DataTrigger Binding="{Binding IsCurrent}" Value="True">
+                <Setter TargetName="Row" Property="Background" Value="{DynamicResource AccentSoft}" />
+            </DataTrigger>
+        </DataTemplate.Triggers>
+    </DataTemplate>
+
 </ResourceDictionary>

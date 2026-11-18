@@ -32,6 +32,8 @@ public sealed partial class OverviewViewModel : LocalizedViewModel
     [ObservableProperty] private string _multiScore = "—";
     [ObservableProperty] private string _singleScore = "—";
     [ObservableProperty] private string _gpuScore = "—";
+    [ObservableProperty] private string _memoryScore = "—";
+    [ObservableProperty] private string _diskScore = "—";
     [ObservableProperty] private bool _hasScore;
 
     private async Task LoadSummaryAsync()
@@ -57,10 +59,14 @@ public sealed partial class OverviewViewModel : LocalizedViewModel
         var multi = AppServices.History.Latest(TestIds.CpuMulti);
         var single = AppServices.History.Latest(TestIds.CpuSingle);
         var gpu = AppServices.History.Latest(TestIds.GpuScene);
+        var mem = AppServices.History.Latest(TestIds.MemoryBench);
+        var disk = AppServices.History.Latest(TestIds.DiskBench);
         GpuScore = gpu?.Score.ToString("N0", Loc.Culture) ?? "—";
+        MemoryScore = mem?.Score.ToString("N0", Loc.Culture) ?? "—";
+        DiskScore = disk?.Score.ToString("N0", Loc.Culture) ?? "—";
         MultiScore = multi?.Score.ToString("N0", Loc.Culture) ?? "—";
         SingleScore = single?.Score.ToString("N0", Loc.Culture) ?? "—";
-        HasScore = multi != null || single != null || gpu != null;
+        HasScore = multi != null || single != null || gpu != null || mem != null || disk != null;
     }
 
     [RelayCommand]

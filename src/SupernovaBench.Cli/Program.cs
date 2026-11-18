@@ -12,6 +12,9 @@ using SupernovaBench.Core.Storage;
 //   supernova-cli bench cpu                 (multi-core, preset padrão)
 //   supernova-cli bench cpu --mode single --quick
 //   supernova-cli bench cpu --mode sustained --minutes 2 --json
+//   supernova-cli bench memory --quick
+//   supernova-cli bench disk --drive D --size 1g
+//   supernova-cli stress cpu --seconds 600
 //   supernova-cli info
 
 var argList = args.ToList();
@@ -108,6 +111,43 @@ if (argList.Count >= 2 && argList[0] == "bench" && argList[1] == "gpu")
     if (!OperatingSystem.IsWindows()) { Console.Error.WriteLine(Loc.T("cli.gpu.notWindows")); return 3; }
     int seconds = int.TryParse(Opt("--seconds"), out var sec) && sec > 0 ? sec : 30;
     return GpuCommands.Bench(Opt("--res"), seconds, Flag("--warp"), Flag("--headless"), Flag("--json"), Flag("--save"));
+}
+
+if (argList.Count >= 2 && argList[0] == "bench" && argList[1] == "memory")
+{
+    using var memCts = new CancellationTokenSource();
+    Console.CancelKeyPress += (_, e) => { e.Cancel = true; memCts.Cancel(); };
+    return Phase3Commands.BenchMemory(Flag("--quick"), Flag("--json"), Flag("--save"), memCts.Token);
+}
+
+if (argList.Count >= 2 && argList[0] == "bench" && argList[1] == "disk")
+{
+    using var diskCts = new CancellationTokenSource();
+    Console.CancelKeyPress += (_, e) => { e.Cancel = true; diskCts.Cancel(); };
+    int runs = int.TryParse(Opt("--runs"), out var rn) && rn > 0 ? rn : 3;
+    double secs = double.TryParse(Opt("--seconds"), NumberStyles.Float, CultureInfo.InvariantCulture, out var ds) && ds > 0 ? ds : 5;
+    return await Phase3Commands.BenchDisk(Opt("--drive"), Opt("--path"), Opt("--size"), runs, secs, Flag("--json"), Flag("--save"), diskCts.Token);
+}
+
+if (argList.Count >= 2 && argList[0] == "stress" && argList[1] == "cpu")
+{
+    double secs = double.TryParse(Opt("--seconds"), NumberStyles.Float, CultureInfo.InvariantCulture, out var cs) && cs > 0 ? cs : 60;
+    int? threads = int.TryParse(Opt("--threads"), out var st) && st > 0 ? st : null;
+    return Phase3Commands.StressCpu(Opt("--mode"), threads, secs);
+}
+
+if (argList.Count >= 2 && argList[0] == "stress" && argList[1] == "ram")
+{
+    long? mb = long.TryParse(Opt("--mb"), out var mbv) && mbv > 0 ? mbv : null;
+    int? percent = int.TryParse(Opt("--percent"), out var pv) && pv is > 0 and <= 95 ? pv : null;
+    double? secs = double.TryParse(Opt("--seconds"), NumberStyles.Float, CultureInfo.InvariantCulture, out var rs) && rs > 0 ? rs : null;
+    return Phase3Commands.StressRam(mb, percent, secs);
+}
+
+if (argList.Count >= 2 && argList[0] == "disk" && argList[1] == "health")
+{
+    if (!OperatingSystem.IsWindows()) { Console.Error.WriteLine(Loc.T("cli.gpu.notWindows")); return 3; }
+    return Phase3Commands.DiskHealthInfo();
 }
 
 Console.Error.WriteLine(Loc.T("cli.unknown"));

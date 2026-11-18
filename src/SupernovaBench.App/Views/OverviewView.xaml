@@ -113,6 +113,10 @@
                             <TextBlock Style="{StaticResource TextMuted}" Margin="0,8,0,0" Text="{loc:Tr ov.noScore}"
                                        Visibility="{Binding HasScore, Converter={StaticResource BoolToVis}, ConverterParameter=invert}" />
                             <Grid Margin="0,8,0,0" Visibility="{Binding HasScore, Converter={StaticResource BoolToVis}}">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="*" />
@@ -129,6 +133,14 @@
                                 <StackPanel Grid.Column="2">
                                     <TextBlock Style="{StaticResource TextMuted}" Text="{loc:Tr ov.gpuScore}" />
                                     <TextBlock Style="{StaticResource BigNumber}" FontSize="34" Text="{Binding GpuScore}" />
+                                </StackPanel>
+                                <StackPanel Grid.Row="1" Margin="0,10,0,0">
+                                    <TextBlock Style="{StaticResource TextMuted}" Text="{loc:Tr ov.memScore}" />
+                                    <TextBlock Style="{StaticResource BigNumber}" FontSize="26" Text="{Binding MemoryScore}" />
+                                </StackPanel>
+                                <StackPanel Grid.Row="1" Grid.Column="1" Margin="0,10,0,0">
+                                    <TextBlock Style="{StaticResource TextMuted}" Text="{loc:Tr ov.diskScore}" />
+                                    <TextBlock Style="{StaticResource BigNumber}" FontSize="26" Text="{Binding DiskScore}" />
                                 </StackPanel>
                             </Grid>
                         </StackPanel>

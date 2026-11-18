@@ -7,12 +7,6 @@ public sealed class ComingSoonViewModel : LocalizedViewModel
 {
     private static readonly Dictionary<string, string> TextKey = new()
     {
-        ["bench.gpu"] = "soon.gpu",
-        ["bench.memory"] = "soon.memory",
-        ["bench.disk"] = "soon.disk",
-        ["stress.cpu"] = "soon.stressCpu",
-        ["stress.gpu"] = "soon.stressGpu",
-        ["stress.ram"] = "soon.stressRam",
         ["games"] = "soon.games",
         ["drivers"] = "soon.drivers",
     };

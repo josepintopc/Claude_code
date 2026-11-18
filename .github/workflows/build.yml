@@ -50,6 +50,16 @@ jobs:
           dotnet run --project src/SupernovaBench.Cli -c Release --no-build -- gpu info --lang pt-BR
           dotnet run --project src/SupernovaBench.Cli -c Release --no-build -- bench gpu --warp --headless --seconds 3 --lang pt-BR
 
+      - name: Memória, disco, stress e saúde dos discos pela linha de comando (fumaça)
+        shell: pwsh
+        run: |
+          $cli = "src/SupernovaBench.Cli/bin/Release/net8.0-windows/supernova-cli.exe"
+          & $cli bench memory --quick --lang pt-BR; if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          & $cli bench disk --path $env:RUNNER_TEMP --size 64m --runs 1 --seconds 1 --lang pt-BR; if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          & $cli stress cpu --seconds 5 --lang pt-BR; if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          & $cli stress ram --mb 256 --seconds 5 --lang pt-BR; if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          & $cli disk health --lang pt-BR; if ($LASTEXITCODE) { exit $LASTEXITCODE }
+
       - name: Publicar SupernovaBench.exe
         run: >
           dotnet publish src/SupernovaBench.App/SupernovaBench.App.csproj -c Release -r win-x64 --self-contained true
