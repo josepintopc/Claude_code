@@ -117,7 +117,7 @@ public sealed partial class CpuStressViewModel : LocalizedViewModel
         HasErrors = false;
         IterationsText = "—";
         ElapsedText = "0:00";
-        StatusText = Loc.T("cpustress.status.running", ThreadCount);
+        StatusText = Loc.T(ThreadCount == 1 ? "cpustress.status.running1" : "cpustress.status.running", ThreadCount);
         IsRunning = true;
         PowerRequest.KeepAwake();
         _timer.Start();

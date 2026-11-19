@@ -80,7 +80,7 @@ public sealed partial class SensorService : ObservableObject, IDisposable
                     await Task.Delay(250, _cts.Token);
                     continue;
                 }
-                var poll = await Task.Run(Monitor.Poll);
+                var poll = await PollOnSensorThreadAsync();
                 if (_cts.IsCancellationRequested) break;
                 Monitor.Apply(poll);
                 if (!IsReady && Monitor.IsOpen)
@@ -101,6 +101,45 @@ public sealed partial class SensorService : ObservableObject, IDisposable
         {
             App.Log(ex);
             StatusText = Loc.T("sensors.openFailed", ex.Message);
+        }
+    }
+
+    // ------------------------------------------------------------------ thread de leitura
+
+    private readonly SemaphoreSlim _pollRequest = new(0);
+    private TaskCompletionSource<SensorPoll>? _pendingPoll;
+    private Thread? _pollThread;
+
+    /// <summary>
+    /// Lê os sensores numa thread fixa com prioridade acima do normal. Para ler cada núcleo, a biblioteca roda
+    /// naquele núcleo; com o benchmark de CPU ocupando todos na prioridade normal, a leitura do pool de threads
+    /// esperava a vez em cada um e o painel ficava parado no valor de antes do teste (e o limite de temperatura
+    /// do stress no modo render não disparava). Não baixamos a prioridade do benchmark: nas CPUs híbridas da
+    /// Intel o Windows manda threads abaixo do normal para os E-cores, o que mudaria a nota.
+    /// </summary>
+    private Task<SensorPoll> PollOnSensorThreadAsync()
+    {
+        if (_pollThread == null)
+        {
+            _pollThread = new Thread(PollLoop) { IsBackground = true, Priority = ThreadPriority.AboveNormal, Name = "Supernova Sensors" };
+            _pollThread.Start();
+        }
+        var tcs = new TaskCompletionSource<SensorPoll>(TaskCreationOptions.RunContinuationsAsynchronously);
+        Volatile.Write(ref _pendingPoll, tcs);
+        _pollRequest.Release();
+        return tcs.Task;
+    }
+
+    private void PollLoop()
+    {
+        while (true)
+        {
+            try { _pollRequest.Wait(_cts.Token); }
+            catch (OperationCanceledException) { return; }
+            var tcs = Volatile.Read(ref _pendingPoll);
+            if (tcs == null) continue;
+            try { tcs.TrySetResult(Monitor.Poll()); }
+            catch (Exception ex) { tcs.TrySetException(ex); }
         }
     }
 
@@ -157,6 +196,7 @@ public sealed partial class SensorService : ObservableObject, IDisposable
     public void Dispose()
     {
         _cts.Cancel();
+        _pendingPoll?.TrySetCanceled();
         Monitor.Dispose();
     }
 }

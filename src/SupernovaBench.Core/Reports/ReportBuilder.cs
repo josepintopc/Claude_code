@@ -135,7 +135,7 @@ public static class ReportBuilder
         if (r.Test == TestIds.DiskBench && r.Metric("seq1m_q8t1.read") is { } seqRead)
             return Loc.T("report.disk", seqRead.ToString("N0", culture), (r.Metric("seq1m_q8t1.write") ?? 0).ToString("N0", culture),
                          (r.Metric("rnd4k_q1t1.read") ?? 0).ToString("N1", culture));
-        return Loc.T("report.threads", r.Threads);
+        return Loc.T(r.Threads == 1 ? "report.thread" : "report.threads", r.Threads);
     }
 
     private static void AppendNode(StringBuilder sb, InfoNode node, Func<string?, string> e)

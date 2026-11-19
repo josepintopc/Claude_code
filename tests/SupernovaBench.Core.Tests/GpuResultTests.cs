@@ -32,6 +32,7 @@ public class GpuResultTests
             var inv = CultureInfo.GetCultureInfo("en");
             Assert.Equal("1920x1080 · 143 avg FPS · 99 FPS 1% low", ReportBuilder.Details(Gpu(), inv));
             Assert.Equal("16 threads", ReportBuilder.Details(new BenchmarkResult { Test = TestIds.CpuMulti, Threads = 16 }, inv));
+            Assert.Equal("1 thread", ReportBuilder.Details(new BenchmarkResult { Test = TestIds.CpuSingle, Threads = 1 }, inv));
         }
         finally
         {
