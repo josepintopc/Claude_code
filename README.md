@@ -74,9 +74,6 @@ A Visão geral mostra os jogos jogados recentemente.
 | **Visor de FPS** | Aparece sozinho no **canto superior direito** da tela do jogo assim que ele começa a desenhar quadros (e some na área de trabalho): FPS colorido (verde ≥ 60, amarelo 30–59, vermelho < 30), tempo de quadro, 1% low dos últimos 10 s, carga e temperatura da CPU (e do núcleo mais ocupado), da GPU e VRAM, e o gargalo. Janela transparente que não recebe cliques nem foco, posicionada no monitor certo em qualquer escala de DPI. **Ctrl+Shift+O** liga/desliga; canto e opacidade ajustáveis. Funciona em janela, tela cheia sem bordas e na tela cheia do Windows 10/11 (não na tela cheia exclusiva "pura" de alguns jogos antigos). O Supernova Bench precisa estar aberto (pode ficar minimizado). |
 | **Comparação online** | Ranking dos seus resultados contra os enviados pela comunidade (mesmo teste, preset e versão do motor), com posição e percentil. **Enviar meu resultado** abre uma issue já preenchida no GitHub; a automação [`community-results.yml`](.github/workflows/community-results.yml) valida só os campos públicos, grava em [`community/results.json`](community/results.json) e responde na issue. Requer o repositório **público**. |
 
----|---|
-| 6 — Extras | Overlay de FPS, detector de gargalo e comparação online. |
-
 ---
 
 ## Download
