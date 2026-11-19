@@ -131,6 +131,9 @@
                 <CheckBox Margin="0,12,0,0" Foreground="{DynamicResource Fg}" FontWeight="SemiBold" IsChecked="{Binding Overlay.OverlayEnabled}"
                           Content="{loc:Tr monitor.overlay.enable}" />
                 <TextBlock Style="{StaticResource TextMuted}" FontSize="12" Margin="22,4,0,0" TextWrapping="Wrap" Text="{loc:Tr monitor.overlay.hotkey}" />
+                <CheckBox Margin="0,10,0,0" Foreground="{DynamicResource Fg}" IsChecked="{Binding Overlay.OnlyInGame}"
+                          Content="{loc:Tr monitor.overlay.onlyInGame}" />
+                <TextBlock Style="{StaticResource TextMuted}" FontSize="12" Margin="22,4,0,0" TextWrapping="Wrap" Text="{loc:Tr monitor.overlay.onlyInGame.hint}" />
                 <TextBlock Style="{StaticResource Caption}" Margin="0,14,0,8" Text="{loc:Tr monitor.overlay.corner}" />
                 <ItemsControl Tag="ovcorner" ItemsSource="{Binding Corners}" ItemTemplate="{StaticResource ChipTemplate}" ItemsPanel="{StaticResource WrapPanelTemplate}" />
                 <TextBlock Style="{StaticResource Caption}" Margin="0,8,0,8" Text="{loc:Tr monitor.overlay.opacity}" />

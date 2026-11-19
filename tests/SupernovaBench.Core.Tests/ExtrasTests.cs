@@ -148,3 +148,77 @@ public class CommunityTests
         Assert.Null(CommunityResults.ParseIssueBody("```json\n{ \"test\": \"cpu.multi\", \"score\": 1e99 }\n```"));
     }
 }
+
+public class OverlayLayoutTests
+{
+    [Theory]
+    [InlineData(29.9, FpsBand.Bad)]
+    [InlineData(30, FpsBand.Ok)]
+    [InlineData(59.9, FpsBand.Ok)]
+    [InlineData(60, FpsBand.Good)]
+    [InlineData(240, FpsBand.Good)]
+    [InlineData(0, FpsBand.Bad)]
+    public void Fps_bands(double fps, FpsBand band) => Assert.Equal(band, OverlayLayout.Band(fps));
+
+    [Fact]
+    public void Places_the_window_in_each_corner_of_the_game_monitor()
+    {
+        // Segundo monitor à direita do principal, 2560×1440 começando em x=1920.
+        var monitor = new PixelRect(1920, 0, 4480, 1440);
+        Assert.Equal((4480 - 300 - 12, 12), OverlayLayout.Place("topright", monitor, 300, 120, 12));
+        Assert.Equal((1920 + 12, 12), OverlayLayout.Place("topleft", monitor, 300, 120, 12));
+        Assert.Equal((1932, 1440 - 120 - 12), OverlayLayout.Place("bottomleft", monitor, 300, 120, 12));
+        Assert.Equal((4168, 1308), OverlayLayout.Place("bottomright", monitor, 300, 120, 12));
+        // Canto desconhecido cai no padrão (superior direito); janela maior que a tela não sai dela.
+        Assert.Equal(OverlayLayout.Place("topright", monitor, 300, 120, 12), OverlayLayout.Place("meio", monitor, 300, 120, 12));
+        Assert.Equal((0, 0), OverlayLayout.Place("topright", new PixelRect(0, 0, 200, 100), 300, 120, 12));
+    }
+
+    [Fact]
+    public void Live_one_percent_low_from_the_last_seconds()
+    {
+        var c = new FrameCounter();
+        double t = 0;
+        // 5 s a ~100 FPS com uma travada de 50 ms a cada 50 quadros (2% dos quadros).
+        for (int i = 1; i <= 500; i++)
+        {
+            t += i % 50 == 0 ? 50 : 10;
+            c.AddPresent(9, t);
+        }
+        var s = c.Snapshot(9, t)!;
+        Assert.Equal(20, s.Low1Fps, 3);
+        Assert.True(s.Fps > 50);
+
+        var few = new FrameCounter();
+        for (int i = 0; i < 20; i++) few.AddPresent(1, i * 10.0);
+        Assert.Equal(0, few.Snapshot(1, 190)!.Low1Fps);   // poucos quadros: ainda sem 1% low
+    }
+
+    [Fact]
+    public void Old_settings_move_the_overlay_to_the_top_right_once()
+    {
+        var dir = Directory.CreateTempSubdirectory("supernova-settings-").FullName;
+        try
+        {
+            var path = Path.Combine(dir, "settings.json");
+            File.WriteAllText(path, """{ "language": "pt-BR", "overlayEnabled": false, "overlayCorner": "topleft" }""");
+            var s = Storage.AppSettings.Load(path);
+            Assert.Equal("topright", s.OverlayCorner);
+            Assert.True(s.OverlayEnabled);
+            Assert.True(s.OverlayOnlyInGame);
+            Assert.Equal(2, s.OverlayDefaultsVersion);
+
+            // Depois da migração, a escolha do usuário é respeitada.
+            s.OverlayCorner = "bottomleft";
+            s.OverlayEnabled = false;
+            s.Save(path);
+            var again = Storage.AppSettings.Load(path);
+            Assert.Equal("bottomleft", again.OverlayCorner);
+            Assert.False(again.OverlayEnabled);
+        }
+        finally
+        {
+            Directory.Delete(dir, true);
+        }
+    }
+}

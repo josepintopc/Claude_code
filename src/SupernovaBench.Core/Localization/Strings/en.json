@@ -761,9 +761,9 @@
   "monitor.record.noGame": "No game is presenting frames right now. Open the game and try again.",
   "monitor.summary.title": "{0} · {1} recorded",
   "monitor.summary.fps": "Average FPS {0} · 1% low {1} · {2} frames",
-  "monitor.overlay": "Overlay",
-  "monitor.overlay.enable": "Show overlay on top of games",
-  "monitor.overlay.hotkey": "Shortcut: Ctrl+Shift+O toggles it anytime, even in game.",
+  "monitor.overlay": "FPS display",
+  "monitor.overlay.enable": "Show the FPS display on top of games",
+  "monitor.overlay.hotkey": "Shortcut: Ctrl+Shift+O toggles it anytime, even in game. Supernova Bench must be open (it can stay minimized).",
   "monitor.overlay.corner": "Position",
   "monitor.overlay.opacity": "Opacity",
   "monitor.overlay.sensors": "Show CPU and GPU",
@@ -772,7 +772,7 @@
   "monitor.corner.topright": "Top right",
   "monitor.corner.bottomleft": "Bottom left",
   "monitor.corner.bottomright": "Bottom right",
-  "monitor.limits": "How it works: FPS comes from the \"present\" events Windows itself publishes (the same technique as PresentMon), without injecting anything into the game — it doesn't interfere with anti-cheat. Works for DirectX 9 to 12 games; Vulkan and OpenGL may not show up. The overlay shows over windowed and borderless fullscreen games; exclusive fullscreen doesn't allow windows on top.",
+  "monitor.limits": "How it works: FPS comes from the \"present\" events Windows itself publishes (the same technique as PresentMon), without injecting anything into the game — it doesn't interfere with anti-cheat. Works for DirectX 9 to 12 games; Vulkan and OpenGL may not show up. The display shows over windowed, borderless and regular Windows 10/11 fullscreen games; only the \"pure\" exclusive fullscreen of some older games blocks windows on top — in that case, use \"borderless fullscreen\" in the game.",
   "bottleneck.unknown": "Not enough data",
   "bottleneck.unknown.advice": "Keep playing for a few seconds (outside menus and loading screens).",
   "bottleneck.gpu": "GPU-bound",
@@ -804,5 +804,10 @@
   "community.position": "You're #{0} of {1} (top {2}%)",
   "community.noMine": "Run this test to join the ranking.",
   "community.empty": "No results yet. Run a benchmark (CPU, GPU, memory or disk) and submit yours.",
-  "community.footer": "Only results from the same test, preset and engine version are compared. Submissions are validated automatically but not verified: use them as a rough reference."
+  "community.footer": "Only results from the same test, preset and engine version are compared. Submissions are validated automatically but not verified: use them as a rough reference.",
+  "overlay.cpu": "{0}  {1}  · core {2}",
+  "overlay.gpu": "{0}  {1}  · VRAM {2}",
+  "overlay.low1": "1% {0}",
+  "monitor.overlay.onlyInGame": "Show only while a game is running",
+  "monitor.overlay.onlyInGame.hint": "The display shows up by itself in the corner of the game's screen as soon as it starts drawing frames, and hides when you go back to the desktop."
 }

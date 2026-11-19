@@ -25,5 +25,8 @@ public class ExtrasWindowsTests
         var hz = ForegroundWindow.RefreshRate();
         Assert.True(hz == null || hz > 1);
         Assert.NotNull(ForegroundWindow.ProcessName(Environment.ProcessId));
+        _ = ForegroundWindow.CurrentWindow();
+        var primary = ForegroundWindow.MonitorBounds(IntPtr.Zero);
+        Assert.True(primary.Width > 0 && primary.Height > 0);
     }
 }

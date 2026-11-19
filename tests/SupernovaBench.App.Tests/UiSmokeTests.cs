@@ -68,6 +68,23 @@ public class UiSmokeTests
         }
         Assert.True(visited.Count >= 4 * 14, $"páginas visitadas: {visited.Count}");
 
+        // Visor de FPS: abre a janela de verdade (pega erro de XAML/binding que só apareceria por cima de um jogo).
+        var overlay = AppServices.Overlay;
+        overlay.OnlyInGame = false;
+        overlay.OverlayEnabled = false;
+        overlay.OverlayEnabled = true;
+        Pump();
+        if (overlay.IsMeasuring) // precisa de administrador (o runner do CI é)
+            Assert.True(overlay.IsOverlayVisible, "o visor de FPS não abriu");
+        foreach (var corner in new[] { "topleft", "bottomright", "topright" })
+        {
+            overlay.OverlayCorner = corner;
+            Pump();
+        }
+        overlay.OverlayEnabled = false;
+        Pump();
+        Assert.False(overlay.IsOverlayVisible);
+
         window.Close();
         AppServices.Shutdown();
     }

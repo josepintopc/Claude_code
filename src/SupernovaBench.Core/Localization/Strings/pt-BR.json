@@ -761,9 +761,9 @@
   "monitor.record.noGame": "Nenhum jogo está entregando quadros agora. Abra o jogo e tente de novo.",
   "monitor.summary.title": "{0} · {1} de gravação",
   "monitor.summary.fps": "FPS médio {0} · 1% low {1} · {2} quadros",
-  "monitor.overlay": "Overlay",
-  "monitor.overlay.enable": "Mostrar overlay por cima dos jogos",
-  "monitor.overlay.hotkey": "Atalho: Ctrl+Shift+O liga e desliga a qualquer momento, mesmo com o jogo aberto.",
+  "monitor.overlay": "Visor de FPS",
+  "monitor.overlay.enable": "Mostrar o visor de FPS por cima dos jogos",
+  "monitor.overlay.hotkey": "Atalho: Ctrl+Shift+O liga e desliga a qualquer momento, mesmo dentro do jogo. O Supernova Bench precisa estar aberto (pode ficar minimizado).",
   "monitor.overlay.corner": "Posição",
   "monitor.overlay.opacity": "Opacidade",
   "monitor.overlay.sensors": "Mostrar CPU e GPU",
@@ -772,7 +772,7 @@
   "monitor.corner.topright": "Superior direito",
   "monitor.corner.bottomleft": "Inferior esquerdo",
   "monitor.corner.bottomright": "Inferior direito",
-  "monitor.limits": "Como funciona: o FPS vem dos eventos de \"present\" que o próprio Windows publica (a mesma técnica do PresentMon), sem injetar nada no jogo — não interfere em anti-cheat. Vale para jogos DirectX 9 a 12; Vulkan e OpenGL podem não aparecer. O overlay aparece em jogos em janela ou tela cheia sem bordas; em tela cheia exclusiva o Windows não permite janelas por cima.",
+  "monitor.limits": "Como funciona: o FPS vem dos eventos de \"present\" que o próprio Windows publica (a mesma técnica do PresentMon), sem injetar nada no jogo — não interfere em anti-cheat. Vale para jogos DirectX 9 a 12; Vulkan e OpenGL podem não aparecer. O visor aparece em jogos em janela, em tela cheia sem bordas e na tela cheia normal do Windows 10/11; só a tela cheia exclusiva \"pura\" de alguns jogos antigos não deixa janelas por cima — nesse caso, use \"tela cheia sem bordas\" no jogo.",
   "bottleneck.unknown": "Sem leitura suficiente",
   "bottleneck.unknown.advice": "Fique alguns segundos jogando (fora de menus e telas de carregamento).",
   "bottleneck.gpu": "Limitado pela GPU",
@@ -804,5 +804,10 @@
   "community.position": "Você está em {0}º de {1} (top {2}%)",
   "community.noMine": "Rode este teste para entrar no ranking.",
   "community.empty": "Ainda não há resultados. Rode um benchmark (CPU, GPU, memória ou disco) e envie o seu.",
-  "community.footer": "Só resultados do mesmo teste, preset e versão do motor são comparados. Os envios são validados automaticamente, mas não verificados: use como referência aproximada."
+  "community.footer": "Só resultados do mesmo teste, preset e versão do motor são comparados. Os envios são validados automaticamente, mas não verificados: use como referência aproximada.",
+  "overlay.cpu": "{0}  {1}  · núcleo {2}",
+  "overlay.gpu": "{0}  {1}  · VRAM {2}",
+  "overlay.low1": "1% {0}",
+  "monitor.overlay.onlyInGame": "Mostrar só quando um jogo estiver aberto",
+  "monitor.overlay.onlyInGame.hint": "O visor aparece sozinho no canto da tela do jogo assim que ele começa a desenhar quadros, e some quando você volta para a área de trabalho."
 }

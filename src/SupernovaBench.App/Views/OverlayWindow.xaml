@@ -2,16 +2,16 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:c="clr-namespace:SupernovaBench.App.Controls"
-        Title="Supernova Bench Overlay"
+        Title="Supernova Bench FPS"
         WindowStyle="None" AllowsTransparency="True" Background="Transparent"
         Topmost="True" ShowInTaskbar="False" ShowActivated="False" Focusable="False"
         ResizeMode="NoResize" SizeToContent="WidthAndHeight"
         Opacity="{Binding OverlayOpacity}"
-        FontFamily="Segoe UI" UseLayoutRounding="True">
+        FontFamily="Segoe UI" UseLayoutRounding="True" SnapsToDevicePixels="True">
     <Window.Resources>
         <c:BoolToVisibilityConverter x:Key="BoolToVis" />
-        <!-- Cores fixas (não seguem o tema): o overlay precisa ser legível por cima de qualquer jogo. -->
-        <SolidColorBrush x:Key="OverlayBg" Color="#E00B0A14" />
+        <!-- Cores fixas (não seguem o tema): o visor precisa ser legível por cima de qualquer jogo. -->
+        <SolidColorBrush x:Key="OverlayBg" Color="#D90B0A14" />
         <SolidColorBrush x:Key="OverlayText" Color="#FFF2EEFF" />
         <SolidColorBrush x:Key="OverlayMuted" Color="#FFB4ADD3" />
         <LinearGradientBrush x:Key="OverlayAccent" StartPoint="0,0" EndPoint="1,0">
@@ -19,24 +19,60 @@
             <GradientStop Color="#FFE0379B" Offset="0.55" />
             <GradientStop Color="#FF7B3FF2" Offset="1" />
         </LinearGradientBrush>
+        <Style x:Key="Value" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="Cascadia Mono, Consolas" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Foreground" Value="{StaticResource OverlayText}" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+        <Style x:Key="Label" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Margin" Value="0,0,10,0" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
     </Window.Resources>
 
-    <Border Margin="12" Padding="12,8,14,10" CornerRadius="10" Background="{StaticResource OverlayBg}"
-            BorderBrush="{StaticResource OverlayAccent}" BorderThickness="0,0,0,2" MinWidth="150">
-        <StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <TextBlock FontFamily="Cascadia Mono, Consolas" FontSize="26" FontWeight="Bold" Foreground="#FFFF9A4D" Text="{Binding FpsText}" />
-                <TextBlock Margin="6,0,0,4" VerticalAlignment="Bottom" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource OverlayMuted}" Text="FPS" />
-                <TextBlock Margin="10,0,0,4" VerticalAlignment="Bottom" FontFamily="Cascadia Mono, Consolas" FontSize="12"
+    <!-- Visor de FPS: 4 linhas compactas (FPS, CPU, GPU, gargalo). -->
+    <Border Padding="12,6,14,8" CornerRadius="10" Background="{StaticResource OverlayBg}"
+            BorderBrush="{StaticResource OverlayAccent}" BorderThickness="0,0,0,2">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <!-- FPS -->
+            <StackPanel Grid.ColumnSpan="2" Orientation="Horizontal">
+                <TextBlock FontFamily="Cascadia Mono, Consolas" FontSize="28" FontWeight="Bold" Foreground="{Binding FpsBrush}" Text="{Binding FpsText}" />
+                <TextBlock Margin="5,0,0,5" VerticalAlignment="Bottom" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource OverlayMuted}" Text="FPS" />
+                <TextBlock Margin="12,0,0,5" VerticalAlignment="Bottom" Style="{StaticResource Value}" FontSize="12"
                            Foreground="{StaticResource OverlayMuted}" Text="{Binding FrameTimeText}" />
+                <TextBlock Margin="10,0,0,5" VerticalAlignment="Bottom" Style="{StaticResource Value}" FontSize="12"
+                           Foreground="{StaticResource OverlayMuted}" Text="{Binding Low1Text}" />
             </StackPanel>
-            <TextBlock FontSize="11" Foreground="{StaticResource OverlayMuted}" TextTrimming="CharacterEllipsis" MaxWidth="260" Text="{Binding AppName}" />
-            <StackPanel Margin="0,4,0,0" Visibility="{Binding ShowSensors, Converter={StaticResource BoolToVis}}">
-                <TextBlock FontFamily="Cascadia Mono, Consolas" FontSize="12" Foreground="{StaticResource OverlayText}" Text="{Binding CpuText}" />
-                <TextBlock FontFamily="Cascadia Mono, Consolas" FontSize="12" Foreground="{StaticResource OverlayText}" Text="{Binding GpuText}" />
-            </StackPanel>
-            <TextBlock Margin="0,4,0,0" FontSize="12" FontWeight="SemiBold" Foreground="#FFFFC94D" Text="{Binding BottleneckText}"
-                       Visibility="{Binding ShowBottleneck, Converter={StaticResource BoolToVis}}" />
-        </StackPanel>
+
+            <!-- CPU -->
+            <TextBlock Grid.Row="1" Style="{StaticResource Label}" Foreground="#FFFF9A4D" Text="CPU"
+                       Visibility="{Binding ShowSensors, Converter={StaticResource BoolToVis}}" />
+            <TextBlock Grid.Row="1" Grid.Column="1" Style="{StaticResource Value}" Text="{Binding OverlayCpuText}"
+                       Visibility="{Binding ShowSensors, Converter={StaticResource BoolToVis}}" />
+
+            <!-- GPU -->
+            <TextBlock Grid.Row="2" Style="{StaticResource Label}" Foreground="#FFB58CFF" Text="GPU"
+                       Visibility="{Binding ShowSensors, Converter={StaticResource BoolToVis}}" />
+            <TextBlock Grid.Row="2" Grid.Column="1" Style="{StaticResource Value}" Text="{Binding OverlayGpuText}"
+                       Visibility="{Binding ShowSensors, Converter={StaticResource BoolToVis}}" />
+
+            <!-- gargalo -->
+            <TextBlock Grid.Row="3" Grid.ColumnSpan="2" Margin="0,3,0,0" FontSize="12" FontWeight="SemiBold" Foreground="#FFFFC94D"
+                       Text="{Binding BottleneckText}" Visibility="{Binding ShowBottleneck, Converter={StaticResource BoolToVis}}" />
+        </Grid>
     </Border>
 </Window>

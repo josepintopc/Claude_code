@@ -4,6 +4,7 @@ using System.Runtime.Versioning;
 using Microsoft.Diagnostics.Tracing;
 using Microsoft.Diagnostics.Tracing.Session;
 using SupernovaBench.Core.Extras;
+using PixelRect = SupernovaBench.Core.Extras.PixelRect;
 
 namespace SupernovaBench.Games;
 
@@ -114,6 +115,35 @@ public static class ForegroundWindow
 
     [DllImport("user32.dll", CharSet = CharSet.Unicode)]
     private static extern bool EnumDisplaySettings(string? deviceName, int modeNum, ref DEVMODE devMode);
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct RECT { public int Left, Top, Right, Bottom; }
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct MONITORINFO { public int cbSize; public RECT rcMonitor, rcWork; public uint dwFlags; }
+
+    [DllImport("user32.dll")] private static extern IntPtr MonitorFromWindow(IntPtr hwnd, uint flags);
+    [DllImport("user32.dll")] private static extern bool GetMonitorInfo(IntPtr monitor, ref MONITORINFO info);
+    private const uint MONITOR_DEFAULTTOPRIMARY = 1, MONITOR_DEFAULTTONEAREST = 2;
+
+    /// <summary>(janela, pid) em primeiro plano.</summary>
+    public static (IntPtr Hwnd, int Pid)? CurrentWindow()
+    {
+        var hwnd = GetForegroundWindow();
+        if (hwnd == IntPtr.Zero) return null;
+        GetWindowThreadProcessId(hwnd, out int pid);
+        return pid > 0 ? (hwnd, pid) : null;
+    }
+
+    /// <summary>Área inteira do monitor onde a janela está (pixels físicos). Sem janela, o monitor principal.</summary>
+    public static PixelRect MonitorBounds(IntPtr hwnd)
+    {
+        var mon = MonitorFromWindow(hwnd, hwnd == IntPtr.Zero ? MONITOR_DEFAULTTOPRIMARY : MONITOR_DEFAULTTONEAREST);
+        var info = new MONITORINFO { cbSize = Marshal.SizeOf<MONITORINFO>() };
+        if (mon != IntPtr.Zero && GetMonitorInfo(mon, ref info))
+            return new PixelRect(info.rcMonitor.Left, info.rcMonitor.Top, info.rcMonitor.Right, info.rcMonitor.Bottom);
+        return new PixelRect(0, 0, 1920, 1080);
+    }
 
     /// <summary>(pid, nome do processo) da janela em foco.</summary>
     public static (int Pid, string Name)? Current()

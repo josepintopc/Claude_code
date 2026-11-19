@@ -1,15 +1,16 @@
 namespace SupernovaBench.Core.Extras;
 
-/// <summary>FPS e tempo de quadro de um processo agora.</summary>
-public sealed record FrameSnapshot(int ProcessId, double Fps, double FrameTimeMs, int FramesInWindow);
+/// <summary>FPS e tempo de quadro de um processo agora, e o 1% low dos últimos 10 s (0 = ainda sem quadros suficientes).</summary>
+public sealed record FrameSnapshot(int ProcessId, double Fps, double FrameTimeMs, int FramesInWindow, double Low1Fps = 0);
 
 /// <summary>
 /// Conta os "presents" (quadros entregues pelo jogo ao Windows) por processo, como o PresentMon.
-/// Recebe eventos de qualquer thread; mantém só o último segundo e meio de cada processo.
+/// Recebe eventos de qualquer thread; mantém os últimos 10 s de cada processo (para o 1% low ao vivo).
 /// </summary>
 public sealed class FrameCounter
 {
-    private const double KeepMs = 1500;
+    private const double KeepMs = 10_000;
+    private const double IdleMs = 1500;
     private readonly object _lock = new();
     private readonly Dictionary<int, Queue<double>> _frames = new();
     private FrameSession? _session;
@@ -35,8 +36,25 @@ public sealed class FrameCounter
             if (recent.Count < 2) return null;
             double span = recent[^1] - recent[0];
             double frameTime = span / (recent.Count - 1);
-            return new FrameSnapshot(processId, frameTime > 0 ? 1000 / frameTime : 0, frameTime, recent.Count);
+            return new FrameSnapshot(processId, frameTime > 0 ? 1000 / frameTime : 0, frameTime, recent.Count, Low1(q, nowMs));
         }
+    }
+
+    /// <summary>1% low dos últimos 10 s: FPS do tempo de quadro do percentil 99 (mesma fórmula da sessão e do benchmark).</summary>
+    private static double Low1(Queue<double> q, double nowMs)
+    {
+        var times = q.Where(t => nowMs - t <= KeepMs).ToList();
+        if (times.Count < 51) return 0;
+        var deltas = new List<double>(times.Count - 1);
+        for (int i = 1; i < times.Count; i++)
+        {
+            double dt = times[i] - times[i - 1];
+            if (dt > 0 && dt < 5000) deltas.Add(dt);
+        }
+        if (deltas.Count < 50) return 0;
+        deltas.Sort();
+        double p99 = deltas[Math.Min(deltas.Count - 1, (int)(deltas.Count * 0.99))];
+        return p99 > 0 ? 1000 / p99 : 0;
     }
 
     /// <summary>Processo com mais quadros no último segundo (o jogo, quando a janela em foco não entrega quadros).</summary>
@@ -76,7 +94,7 @@ public sealed class FrameCounter
     public void Prune(double nowMs)
     {
         lock (_lock)
-            foreach (var pid in _frames.Where(kv => kv.Value.Count == 0 || nowMs - kv.Value.Last() > KeepMs).Select(kv => kv.Key).ToList())
+            foreach (var pid in _frames.Where(kv => kv.Value.Count == 0 || nowMs - kv.Value.Last() > IdleMs).Select(kv => kv.Key).ToList())
                 _frames.Remove(pid);
     }
 }
