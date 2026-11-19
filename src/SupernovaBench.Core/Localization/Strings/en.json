@@ -158,6 +158,7 @@
   "sensors.starting": "Detecting sensors... this takes a few seconds.",
   "sensors.openFailed": "The sensor library failed to start: {0}",
   "sensors.count": "{0} sensors",
+  "sensors.disk": "Disk {0}",
   "sensors.col.hardware": "Hardware",
   "sensors.col.sensor": "Sensor",
   "sensors.col.type": "Type",

@@ -1,5 +1,8 @@
 using System.Collections.ObjectModel;
+using System.Management;
+using System.Text.RegularExpressions;
 using LibreHardwareMonitor.Hardware;
+using SupernovaBench.Core.Localization;
 
 namespace SupernovaBench.Hardware;
 
@@ -84,6 +87,8 @@ public sealed class SensorMonitor : IDisposable
     {
         try { hw.Update(); }
         catch { return; } // um dispositivo com problema não derruba os outros
+        bool badHealthLog = hw.HardwareType == HardwareType.Storage
+                            && NvmeHealthLooksInvalid(hw.Sensors.Select(s => (s.SensorType, s.Name, s.Value)));
         foreach (var s in hw.Sensors)
         {
             if (reset)
@@ -91,13 +96,15 @@ public sealed class SensorMonitor : IDisposable
                 s.ResetMin();
                 s.ResetMax();
             }
+            bool hide = badHealthLog && !KeepWhenHealthLogInvalid(s.SensorType, s.Name);
             string id = s.Identifier.ToString();
             if (!_index.TryGetValue(id, out var row))
             {
+                if (hide) continue;
                 row = new SensorReading
                 {
                     Id = id,
-                    Hardware = hw.Name,
+                    Hardware = HardwareName(hw),
                     Name = s.Name,
                     Type = s.SensorType,
                     HardwareType = hw.HardwareType,
@@ -105,10 +112,88 @@ public sealed class SensorMonitor : IDisposable
                 _index[id] = row;
                 poll.NewRows.Add(row);
             }
-            poll.Updates.Add((row, s.Value, s.Min, s.Max));
+            if (hide)
+                poll.Updates.Add((row, null, null, null));
+            else
+                poll.Updates.Add((row, Plausible(s.SensorType, s.Name, s.Value), Plausible(s.SensorType, s.Name, s.Min),
+                                  Plausible(s.SensorType, s.Name, s.Max)));
         }
         foreach (var sub in hw.SubHardware)
             Walk(sub, poll, reset);
+    }
+
+    // ------------------------------------------------------------------ leituras que a biblioteca entrega erradas
+
+    /// <summary>
+    /// Temperatura de 0 °C ou abaixo é sensor sem leitura (a biblioteca começa em 0), não frio de verdade.
+    /// "Distance to TjMax" é exceção: 0 ali significa CPU no limite térmico.
+    /// </summary>
+    public static float? Plausible(SensorType type, string name, float? value)
+        => type == SensorType.Temperature && value <= 0 && !name.Contains("Distance", StringComparison.Ordinal) ? null : value;
+
+    /// <summary>
+    /// Em alguns SSDs NVMe (ex.: SK hynix com o driver do Windows) a biblioteca não consegue o log de saúde e mostra
+    /// zeros e 255: temperatura 0, reserva 0% com limite 255%, uso 255%. Os dados certos ficam em "Saúde dos discos".
+    /// </summary>
+    public static bool NvmeHealthLooksInvalid(IEnumerable<(SensorType Type, string Name, float? Value)> sensors)
+    {
+        foreach (var (type, name, value) in sensors)
+        {
+            if (type == SensorType.Temperature && name == "Composite Temperature" && value is not > 0) return true;
+            if (type == SensorType.Level && name is "Available Spare" or "Available Spare Threshold" && value > 100) return true;
+        }
+        return false;
+    }
+
+    /// <summary>Com o log de saúde inválido, só fica o que vem do Windows (atividade, velocidade, espaço) e os limites de temperatura.</summary>
+    public static bool KeepWhenHealthLogInvalid(SensorType type, string name) => type switch
+    {
+        SensorType.Load or SensorType.Throughput => true,
+        SensorType.Data => name.Contains("Space", StringComparison.Ordinal),
+        SensorType.Temperature => name.StartsWith("Warning", StringComparison.Ordinal) || name.StartsWith("Critical", StringComparison.Ordinal),
+        _ => false,
+    };
+
+    private Dictionary<int, string>? _diskModels;
+
+    /// <summary>
+    /// Nome sem os caracteres nulos e espaços com que alguns SSDs NVMe preenchem o campo de modelo
+    /// (o SK hynix HFS001TEJ9X125N chega como 40 × '\0').
+    /// </summary>
+    public static string CleanName(string? name)
+        => new string((name ?? "").Where(c => !char.IsControl(c)).ToArray()).Trim();
+
+    /// <summary>Nome do grupo. Quando a biblioteca não tem o modelo do SSD, usa o do Windows (WMI).</summary>
+    private string HardwareName(IHardware hw)
+    {
+        string name = CleanName(hw.Name);
+        if (name.Length > 0) return name;
+        string last = hw.Identifier.ToString().Split('/', StringSplitOptions.RemoveEmptyEntries).LastOrDefault() ?? "";
+        if (hw.HardwareType == HardwareType.Storage && int.TryParse(last, out int index))
+        {
+            _diskModels ??= DiskModels();
+            return _diskModels.TryGetValue(index, out var model) ? model : Loc.T("sensors.disk", index);
+        }
+        return $"{hw.HardwareType} {last}".Trim();
+    }
+
+    private static Dictionary<int, string> DiskModels()
+    {
+        var map = new Dictionary<int, string>();
+        try
+        {
+            using var searcher = new ManagementObjectSearcher("SELECT Index, Model FROM Win32_DiskDrive");
+            foreach (var d in searcher.Get().Cast<ManagementObject>())
+            {
+                string model = d["Model"]?.ToString()?.Trim() ?? "";
+                if (d["Index"] is { } i && model.Length > 0) map[Convert.ToInt32(i)] = model;
+            }
+        }
+        catch
+        {
+            // Sem WMI: fica o nome genérico.
+        }
+        return map;
     }
 
     public void Apply(SensorPoll poll)
@@ -143,7 +228,7 @@ public sealed class SensorMonitor : IDisposable
     {
         get
         {
-            var cores = Of(HardwareType.Cpu, SensorType.Load).Where(r => r.Name.StartsWith("CPU Core #", StringComparison.Ordinal))
+            var cores = Of(HardwareType.Cpu, SensorType.Load).Where(r => IsCoreSensorName(r.Name))
                                                              .Select(r => r.RawValue!.Value).ToList();
             return cores.Count > 0 ? cores.Max() : null;
         }
@@ -154,11 +239,19 @@ public sealed class SensorMonitor : IDisposable
     {
         get
         {
-            var cores = Of(HardwareType.Cpu, SensorType.Clock).Where(r => r.Name.StartsWith("Core #") || r.Name.StartsWith("CPU Core #"))
+            var cores = Of(HardwareType.Cpu, SensorType.Clock).Where(r => IsCoreSensorName(r.Name))
                                                              .Select(r => r.RawValue!.Value).ToList();
             return cores.Count > 0 ? cores.Average() : null;
         }
     }
+
+    private static readonly Regex CoreSensorName = new(@"^(CPU )?([PE]-)?Core #\d+", RegexOptions.CultureInvariant);
+
+    /// <summary>
+    /// Sensor de um núcleo: "Core #1", "CPU Core #1" (e "CPU Core #1 Thread #2") ou, nas CPUs híbridas da Intel
+    /// (Core 12ª geração em diante, Core Ultra), "P-Core #1" e "E-Core #1".
+    /// </summary>
+    public static bool IsCoreSensorName(string name) => CoreSensorName.IsMatch(name);
 
     /// <summary>GPU dedicada (NVIDIA/AMD) tem prioridade sobre a integrada (Intel).</summary>
     private HardwareType? MainGpu

@@ -158,6 +158,7 @@
   "sensors.starting": "Detectando sensores... isso leva alguns segundos.",
   "sensors.openFailed": "A biblioteca de sensores não iniciou: {0}",
   "sensors.count": "{0} sensores",
+  "sensors.disk": "Disco {0}",
   "sensors.col.hardware": "Hardware",
   "sensors.col.sensor": "Sensor",
   "sensors.col.type": "Tipo",
